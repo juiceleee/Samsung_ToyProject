@@ -28,7 +28,8 @@ public class SimpleController {
     })
     @GetMapping("/keyword")
     @ApiOperation(value = "Search media based on keyword", response = ResponseEntity.class, notes = "require parameters")
-    public ResponseEntity getMediabyKeyword(
+    @ResponseBody
+    public SearchResponseVO getMediabyKeyword(
             @RequestHeader(value = "x-user-id") String userId,
             @RequestHeader(value = "x-svc-id") String svcId,
             @RequestHeader(value = "x-device-id") String devId,
@@ -46,6 +47,6 @@ public class SimpleController {
     ){
         String[] result_data = {"Nothing", "at", "all"};
         SearchResponseVO responseVO = new SearchResponseVO("200", "GOOD", "123", result_data);
-        return ResponseEntity.ok(responseVO);
+        return responseVO;
     }
 }
