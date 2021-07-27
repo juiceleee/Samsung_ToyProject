@@ -10,7 +10,6 @@ import java.util.HashMap;
 @Data
 @AllArgsConstructor
 @Builder
-public class SearchResponseVO {
-    String resultCode;
-    HashMap<Integer, Integer> resultData;
+public class SearchResultVO {
+    HashMap<Integer, Integer> shoppingList;
 }
