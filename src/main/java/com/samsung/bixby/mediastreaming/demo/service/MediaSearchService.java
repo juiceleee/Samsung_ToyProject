@@ -19,10 +19,7 @@ public class MediaSearchService {
     }
 
     public SearchResultVO findShoppingListById(String userName) {
-        if(shoppingDAO.isUserName(userName))
-            return shoppingDAO.getShoppingListById(userName);
-        else
-            return null;
+        return shoppingDAO.getShoppingListById(userName);
     }
 
     public SearchResultVO addShoppingListById(String userName, String itemName ,Integer itemCnt) {
