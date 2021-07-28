@@ -69,13 +69,44 @@ public class SimpleController {
         }
     }
 
-//    @DeleteMapping("/user/{userName}")
-//    @ApiOperation(value = "Delete user specified by username")
-//    @ResponseBody
-//    public UserResponseVO deleteUser(@PathVariable String userName){
-//        UserResultVO resultVO = userService.deleteUser(userName);
-//
-//    }
+    @DeleteMapping("/user/{userName}")
+    @ApiOperation(value = "Delete user specified by username")
+    public ResponseEntity<HashMap<String, String>> deleteUser(@PathVariable String userName){
+        UserResultVO resultVO = userService.deleteUser(userName);
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()) {
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exist!");
+                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(DELETE /user/{username}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/user/{oldUserName}/{newUserName}")
+    @ApiOperation(value = "Change user name to new one")
+    public ResponseEntity<HashMap<String, String>> changeUser(@PathVariable String oldUserName, @PathVariable String newUserName){
+        UserResultVO resultVO = userService.changeUser(oldUserName, newUserName);
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()) {
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exist!");
+                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_USER_ALREADY_EXIST:
+                httpHeaders.add("errorMessage", "New name already used! Pick another one");
+                return new ResponseEntity<>(makeBadReqBody("New name already used! Pick another one"), httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(DELETE /user/{username}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 
     /** /list methods **/

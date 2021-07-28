@@ -1,10 +1,12 @@
 package com.samsung.bixby.mediastreaming.demo.dao;
 
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
+import com.samsung.bixby.mediastreaming.demo.mockDB.DB;
 import com.samsung.bixby.mediastreaming.demo.vo.ItemResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserResultVO;
 import jdk.jpackage.internal.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -12,18 +14,7 @@ import java.util.Map;
 
 @Repository
 public class ShoppingDAO {
-
-    private Integer userCnt = 0;
-    private Integer itemCnt = 0;
-
-    //user : userName, userId
-    private HashMap<String, Integer> userDB = new HashMap<>();
-    //basket : userId, itemId, itemCnt
-    private HashMap<Integer, HashMap<Integer, Integer>> basketDB = new HashMap<>();
-    //itemId : itemName, itemId
-    private HashMap<String, Integer> itemIdDB = new HashMap<>();
-    //itemCnt : itemId, itemCnt
-    private HashMap<Integer, Integer> itemCntDB = new HashMap<>();
+    private DB db = new DB();
 
     public HashMap<String, String> changeMapToString(HashMap<?, ?> map){
         HashMap<String, String> result = new HashMap<>();
@@ -37,32 +28,65 @@ public class ShoppingDAO {
     /** /user methods **/
     public UserResultVO getUserList() {
         return UserResultVO.builder()
-                            .map(this.changeMapToString(this.userDB))
+                            .map(this.changeMapToString(db.userDB))
                             .status(Constants.VO_SUCCESS)
                             .build();
     }
 
     public UserResultVO addUser(String userName) {
-        if(this.userDB.containsKey(userName))
+        if(db.userDB.containsKey(userName))
             return UserResultVO.builder()
                                 .map(null)
                                 .status(Constants.VO_USER_ALREADY_EXIST)
                                 .build();
         else {
-            this.userDB.put(userName, this.userCnt);
-            this.basketDB.put(this.userCnt, new HashMap<>()); //add empty basket
-            this.userCnt += 1;
+            db.userDB.put(userName, db.userCnt);
+            db.basketDB.put(db.userCnt, new HashMap<>()); //add empty basket
+            db.userCnt += 1;
             return getUserList();
         }
 
     }
 
+    public UserResultVO deleteUser(String userName) {
+        if(!db.userDB.containsKey(userName))
+            return UserResultVO.builder()
+                                .map(null)
+                                .status(Constants.VO_USER_NOT_EXIST)
+                                .build();
+        else{
+            Integer userId = this.getUserIdByName(userName);
+            db.basketDB.remove(userId);
+            db.userDB.remove(userName);
+            return getUserList();
+        }
+    }
+
+    public UserResultVO changeUser(String oldUserName, String newUserName) {
+        if(!db.userDB.containsKey(oldUserName))
+            return UserResultVO.builder()
+                                .map(null)
+                                .status(Constants.VO_USER_NOT_EXIST)
+                                .build();
+
+        if(db.userDB.containsKey(newUserName))
+            return UserResultVO.builder()
+                    .map(null)
+                    .status(Constants.VO_USER_ALREADY_EXIST)
+                    .build();
+
+        Integer userId = this.getUserIdByName(oldUserName);
+        db.userDB.remove(oldUserName);
+        db.userDB.put(newUserName, userId);
+        return getUserList();
+    }
+
     public boolean isUserName(String userName) {
-        return this.userDB.containsKey(userName);
+        return db.userDB.containsKey(userName);
     }
 
     public Integer getUserIdByName(String userName){
-        return this.userDB.get(userName);
+        return db.userDB.get(userName);
     }
 
 
@@ -76,7 +100,7 @@ public class ShoppingDAO {
                                     .build();
         else {
             return SearchResultVO.builder()
-                    .shoppingList(this.changeMapToString(this.basketDB.get(this.getUserIdByName(userName))))
+                    .shoppingList(this.changeMapToString(db.basketDB.get(this.getUserIdByName(userName))))
                     .status(Constants.VO_SUCCESS)
                     .build();
         }
@@ -102,7 +126,7 @@ public class ShoppingDAO {
 
 
         if (this.getShoppingListById(userName).getShoppingList() != null) {
-            temp = this.basketDB.get(userId);
+            temp = db.basketDB.get(userId);
             if(temp.containsKey(itemId))
                 temp.put(itemId, temp.get(itemId) + itemCnt);
             else
@@ -112,30 +136,30 @@ public class ShoppingDAO {
             temp = new HashMap<>();
             temp.put(itemId, itemCnt);
         }
-        this.basketDB.put(userId, temp);
+        db.basketDB.put(userId, temp);
         return this.getShoppingListById(userName);
     }
 
     /** /item methods **/
 
     private boolean isItem(String itemName) {
-        return this.itemIdDB.containsKey(itemName);
+        return db.itemIdDB.containsKey(itemName);
     }
 
     private Integer getItemIdByName(String itemName){
-        return this.itemIdDB.get(itemName);
+        return db.itemIdDB.get(itemName);
     }
 
 
     public ItemResultVO addItemByName(String itemName, Integer itemCnt) {
         if(this.isItem(itemName)){
             Integer itemId = this.getItemIdByName(itemName);
-            this.itemCntDB.put(itemId, itemCntDB.get(itemId) + itemCnt);
+            db.itemCntDB.put(itemId, db.itemCntDB.get(itemId) + itemCnt);
         }
         else{
-            itemIdDB.put(itemName, this.itemCnt);
-            itemCntDB.put(this.itemCnt, itemCnt);
-            this.itemCnt += 1;
+            db.itemIdDB.put(itemName, db.itemCnt);
+            db.itemCntDB.put(db.itemCnt, itemCnt);
+            db.itemCnt += 1;
         }
 
         return this.getItemList();
@@ -144,8 +168,8 @@ public class ShoppingDAO {
 
     public ItemResultVO getItemList() {
         HashMap<String, Integer> temp = new HashMap<>();
-        for(HashMap.Entry<String, Integer> entry : this.itemIdDB.entrySet()){
-            temp.put(entry.getKey(), this.itemCntDB.get(entry.getValue()));
+        for(HashMap.Entry<String, Integer> entry : db.itemIdDB.entrySet()){
+            temp.put(entry.getKey(), db.itemCntDB.get(entry.getValue()));
         }
 
         return ItemResultVO.builder()

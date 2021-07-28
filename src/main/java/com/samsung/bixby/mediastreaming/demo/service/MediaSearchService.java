@@ -41,4 +41,12 @@ public class MediaSearchService {
     public UserResultVO addUser(String userName) {
         return shoppingDAO.addUser(userName);
     }
+
+    public UserResultVO deleteUser(String userName) {
+        return shoppingDAO.deleteUser(userName);
+    }
+
+    public UserResultVO changeUser(String oldUserName, String newUserName) {
+        return shoppingDAO.changeUser(oldUserName, newUserName);
+    }
 }
