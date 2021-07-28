@@ -2,20 +2,10 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 
 
 import com.samsung.bixby.mediastreaming.demo.service.MediaSearchService;
-import com.samsung.bixby.mediastreaming.demo.vo.AddItemResultVO;
-import com.samsung.bixby.mediastreaming.demo.vo.SearchResponseVO;
-import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
-import com.samsung.bixby.mediastreaming.demo.vo.AddItemResponseVO;
+import com.samsung.bixby.mediastreaming.demo.vo.*;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 @RestController
 @Api(tags = "/shopping list API")
@@ -30,12 +20,50 @@ public class SimpleController {
         this.userService = userService;
     }
 
-    //GET method
-    @GetMapping("/list/{userId}")
-    @ApiOperation(value = "Browse shopping list by userid", response = SearchResultVO.class, notes = "null if no user information")
+
+    /** /user methods **/
+    @GetMapping("/user")
+    @ApiOperation(value = "Get current user list")
+    public UserResponseVO getUserList(){
+        return UserResponseVO.builder()
+                                .resultCode("200")
+                                .map(userService.getUserList().getMap()).build();
+
+    }
+
+    @PostMapping("/user/{userName}")
+    @ApiOperation(value = "Add new user to DB")
     @ResponseBody
-    public SearchResponseVO getShoppingList(@PathVariable String userId){
-        SearchResultVO resultVO = userService.findShoppingListById(userId);
+    public UserResponseVO addUser(@PathVariable String userName){
+        UserResultVO resultVO = userService.addUser(userName);
+        if(resultVO != null)
+            return UserResponseVO.builder()
+                                    .resultCode("201")
+                                    .map(resultVO.getMap())
+                                    .build();
+        else
+            return UserResponseVO.builder()
+                                    .resultCode("500")
+                                    .map(null)
+                                    .build();
+    }
+
+//    @DeleteMapping("/user/{userName}")
+//    @ApiOperation(value = "Delete user specified by username")
+//    @ResponseBody
+//    public UserResponseVO deleteUser(@PathVariable String userName){
+//        UserResultVO resultVO = userService.deleteUser(userName);
+//
+//    }
+
+
+    /** /list methods **/
+    //GET method
+    @GetMapping("/list/{userName}")
+    @ApiOperation(value = "Browse shopping list by username", response = SearchResultVO.class, notes = "null if no user information")
+    @ResponseBody
+    public SearchResponseVO getShoppingList(@PathVariable String userName){
+        SearchResultVO resultVO = userService.findShoppingListById(userName);
         if(resultVO != null)
             return SearchResponseVO.builder()
                     .resultCode("200")
@@ -49,11 +77,11 @@ public class SimpleController {
     }
 
     //POST method
-    @PostMapping("/list/{userId}/{itemId}/{itemCnt}")
+    @PostMapping("/list/{userName}/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new item to shopping list", response = SearchResultVO.class)
     @ResponseBody
-    public SearchResponseVO addShoppingList(@PathVariable String userId, @PathVariable Integer itemId, @PathVariable Integer itemCnt){
-        SearchResultVO resultV0 = userService.addShoppingListById(userId, itemId, itemCnt);
+    public SearchResponseVO addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
+        SearchResultVO resultV0 = userService.addShoppingListById(userName, itemName, itemCnt);
         if(resultV0!= null)
             return SearchResponseVO.builder()
                                     .resultCode("201")
@@ -66,29 +94,31 @@ public class SimpleController {
                                     .build();
     }
 
+    /** /item methods **/
+
     @GetMapping("/item")
     @ApiOperation(value = "Get item list")
     @ResponseBody
-    public AddItemResponseVO getItem(){
-        AddItemResultVO resultVO = userService.getItemList();
-        return AddItemResponseVO.builder()
+    public ItemResponseVO getItem(){
+        ItemResultVO resultVO = userService.getItemList();
+        return ItemResponseVO.builder()
                                 .resultCode("200")
                                 .map(resultVO.getMap())
                                 .build();
     }
 
-    @PostMapping("/item/{itemName}/{itemNum}")
+    @PostMapping("/item/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new product")
     @ResponseBody
-    public AddItemResponseVO addItem(@PathVariable String itemName, @PathVariable Integer itemNum){
-        AddItemResultVO resultVO = userService.addItemByName(itemName, itemNum);
+    public ItemResponseVO addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
+        ItemResultVO resultVO = userService.addItemByName(itemName, itemCnt);
         if(resultVO != null)
-            return AddItemResponseVO.builder()
+            return ItemResponseVO.builder()
                                     .resultCode("201")
                                     .map(resultVO.getMap())
                                     .build();
         else
-            return AddItemResponseVO.builder()
+            return ItemResponseVO.builder()
                                     .resultCode("500")
                                     .map(null)
                                     .build();

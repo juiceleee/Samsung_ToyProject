@@ -9,7 +9,6 @@ import java.util.HashMap;
 @Data
 @AllArgsConstructor
 @Builder
-public class AddItemResponseVO {
-    String resultCode;
+public class ItemResultVO {
     HashMap<String, Integer> map;
 }
