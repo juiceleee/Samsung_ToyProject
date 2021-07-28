@@ -1,11 +1,17 @@
 package com.samsung.bixby.mediastreaming.demo.controller;
 
 
+import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.service.MediaSearchService;
 import com.samsung.bixby.mediastreaming.demo.vo.*;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RestController
 @Api(tags = "/shopping list API")
@@ -24,28 +30,37 @@ public class SimpleController {
     /** /user methods **/
     @GetMapping("/user")
     @ApiOperation(value = "Get current user list")
-    public UserResponseVO getUserList(){
-        return UserResponseVO.builder()
-                                .resultCode("200")
-                                .map(userService.getUserList().getMap()).build();
+    public ResponseEntity<HashMap<String, Integer>> getUserList(){
+        UserResultVO resultVO = userService.getUserList();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()) {
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(GET /user}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
 
     }
 
     @PostMapping("/user/{userName}")
     @ApiOperation(value = "Add new user to DB")
-    @ResponseBody
-    public UserResponseVO addUser(@PathVariable String userName){
+    public ResponseEntity<HashMap<String, Integer>> addUser(@PathVariable String userName){
         UserResultVO resultVO = userService.addUser(userName);
-        if(resultVO != null)
-            return UserResponseVO.builder()
-                                    .resultCode("201")
-                                    .map(resultVO.getMap())
-                                    .build();
-        else
-            return UserResponseVO.builder()
-                                    .resultCode("500")
-                                    .map(null)
-                                    .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()) {
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+            case Constants.VO_USER_ALREADY_EXIST:
+                httpHeaders.add("errorMessage", "User already exists!");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /user/{username}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 //    @DeleteMapping("/user/{userName}")
@@ -61,67 +76,75 @@ public class SimpleController {
     //GET method
     @GetMapping("/list/{userName}")
     @ApiOperation(value = "Browse shopping list by username", response = SearchResultVO.class, notes = "null if no user information")
-    @ResponseBody
-    public SearchResponseVO getShoppingList(@PathVariable String userName){
+    public ResponseEntity<HashMap<Integer, Integer>> getShoppingList(@PathVariable String userName){
+        HttpHeaders httpHeaders = new HttpHeaders();
         SearchResultVO resultVO = userService.findShoppingListById(userName);
-        if(resultVO != null)
-            return SearchResponseVO.builder()
-                    .resultCode("200")
-                    .resultData(resultVO.getShoppingList())
-                    .build();
-        else
-            return SearchResponseVO.builder()
-                    .resultCode("500")
-                    .resultData(null)
-                    .build();
+
+        switch(resultVO.getStatus()) {
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exists!");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(GET /list/{username}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     //POST method
     @PostMapping("/list/{userName}/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new item to shopping list", response = SearchResultVO.class)
-    @ResponseBody
-    public SearchResponseVO addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
-        SearchResultVO resultV0 = userService.addShoppingListById(userName, itemName, itemCnt);
-        if(resultV0!= null)
-            return SearchResponseVO.builder()
-                                    .resultCode("201")
-                                    .resultData(resultV0.getShoppingList())
-                                    .build();
-        else
-            return SearchResponseVO.builder()
-                                    .resultCode("500")
-                                    .resultData(null)
-                                    .build();
+    public ResponseEntity<HashMap<Integer, Integer>> addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
+        HttpHeaders httpHeaders = new HttpHeaders();
+        SearchResultVO resultVO = userService.addShoppingListById(userName, itemName, itemCnt);
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.CREATED);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exists!");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_NOT_EXIST:
+                httpHeaders.add("errorMessage", "Item not exists!");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /** /item methods **/
 
     @GetMapping("/item")
     @ApiOperation(value = "Get item list")
-    @ResponseBody
-    public ItemResponseVO getItem(){
+    public ResponseEntity<HashMap<String, Integer>> getItem(){
         ItemResultVO resultVO = userService.getItemList();
-        return ItemResponseVO.builder()
-                                .resultCode("200")
-                                .map(resultVO.getMap())
-                                .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(GET /item");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
     }
 
     @PostMapping("/item/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new product")
-    @ResponseBody
-    public ItemResponseVO addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
+    public ResponseEntity<HashMap<String, Integer>> addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
         ItemResultVO resultVO = userService.addItemByName(itemName, itemCnt);
-        if(resultVO != null)
-            return ItemResponseVO.builder()
-                                    .resultCode("201")
-                                    .map(resultVO.getMap())
-                                    .build();
-        else
-            return ItemResponseVO.builder()
-                                    .resultCode("500")
-                                    .map(null)
-                                    .build();
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /item/{itemName}/{itemCnt}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

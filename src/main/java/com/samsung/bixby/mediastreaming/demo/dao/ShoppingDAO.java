@@ -1,5 +1,6 @@
 package com.samsung.bixby.mediastreaming.demo.dao;
 
+import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.vo.ItemResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserResultVO;
@@ -15,15 +16,6 @@ public class ShoppingDAO {
     private Integer userCnt = 0;
     private Integer itemCnt = 0;
 
-    private static class Pair<T,S>{
-        T first;
-        S second;
-
-        public Pair(T first, S second){
-            this.first = first;
-            this.second = second;
-        }
-    }
     //user : userName, userId
     private HashMap<String, Integer> userDB = new HashMap<>();
     //basket : userId, itemId, itemCnt
@@ -38,18 +30,23 @@ public class ShoppingDAO {
     public UserResultVO getUserList() {
         return UserResultVO.builder()
                             .map(userDB)
+                            .status(Constants.VO_SUCCESS)
                             .build();
     }
 
     public UserResultVO addUser(String userName) {
         if(this.userDB.containsKey(userName))
-            return null;
+            return UserResultVO.builder()
+                                .map(null)
+                                .status(Constants.VO_USER_ALREADY_EXIST)
+                                .build();
         else {
             this.userDB.put(userName, this.userCnt);
             this.basketDB.put(this.userCnt, new HashMap<>()); //add empty basket
             this.userCnt += 1;
             return UserResultVO.builder()
                                 .map(this.userDB)
+                                .status(Constants.VO_SUCCESS)
                                 .build();
         }
 
@@ -70,10 +67,12 @@ public class ShoppingDAO {
         if(!isUserName(userName))
             return SearchResultVO.builder()
                                     .shoppingList(null)
+                                    .status(Constants.VO_USER_NOT_EXIST)
                                     .build();
         else {
             return SearchResultVO.builder()
                     .shoppingList(this.basketDB.get(this.getUserIdByName(userName)))
+                    .status(Constants.VO_SUCCESS)
                     .build();
         }
 
@@ -82,9 +81,15 @@ public class ShoppingDAO {
 
     public SearchResultVO addShoppingListById(String userName, String itemName, Integer itemCnt) {
         if(!this.isItem(itemName)) //item not exist
-            return null;
+            return SearchResultVO.builder()
+                                    .shoppingList(null)
+                                    .status(Constants.VO_ITEM_NOT_EXIST)
+                                    .build();
         if(!this.isUserName(userName)) //user not exist
-            return null;
+            return SearchResultVO.builder()
+                                    .shoppingList(null)
+                                    .status(Constants.VO_USER_NOT_EXIST)
+                                    .build();
 
         HashMap<Integer, Integer> temp;
         Integer userId = this.getUserIdByName(userName);
@@ -139,6 +144,7 @@ public class ShoppingDAO {
         }
 
         return ItemResultVO.builder()
+                .status(Constants.VO_SUCCESS)
                 .map(temp)
                 .build();
     }

@@ -10,5 +10,6 @@ import java.util.HashMap;
 @AllArgsConstructor
 @Builder
 public class ItemResultVO {
+    int status;
     HashMap<String, Integer> map;
 }
