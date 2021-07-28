@@ -11,5 +11,5 @@ import java.util.HashMap;
 @Builder
 public class UserResultVO {
     int status;
-    HashMap<String, Integer> map;
+    HashMap<String, String> map;
 }

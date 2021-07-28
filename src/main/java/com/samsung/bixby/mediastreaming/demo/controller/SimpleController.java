@@ -21,6 +21,12 @@ import java.util.HashMap;
 public class SimpleController {
     private MediaSearchService userService;
 
+    public HashMap<String, String> makeBadReqBody(String str) {
+        HashMap<String, String> result = new HashMap<>();
+        result.put("errorMessage", str);
+        return result;
+    }
+
     @Autowired
     public SimpleController(MediaSearchService userService) {
         this.userService = userService;
@@ -30,7 +36,7 @@ public class SimpleController {
     /** /user methods **/
     @GetMapping("/user")
     @ApiOperation(value = "Get current user list")
-    public ResponseEntity<HashMap<String, Integer>> getUserList(){
+    public ResponseEntity<HashMap<String, String>> getUserList(){
         UserResultVO resultVO = userService.getUserList();
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -47,7 +53,7 @@ public class SimpleController {
 
     @PostMapping("/user/{userName}")
     @ApiOperation(value = "Add new user to DB")
-    public ResponseEntity<HashMap<String, Integer>> addUser(@PathVariable String userName){
+    public ResponseEntity<HashMap<String, String>> addUser(@PathVariable String userName){
         UserResultVO resultVO = userService.addUser(userName);
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -56,7 +62,7 @@ public class SimpleController {
                 return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
             case Constants.VO_USER_ALREADY_EXIST:
                 httpHeaders.add("errorMessage", "User already exists!");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(makeBadReqBody("User already exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /user/{username}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -76,7 +82,7 @@ public class SimpleController {
     //GET method
     @GetMapping("/list/{userName}")
     @ApiOperation(value = "Browse shopping list by username", response = SearchResultVO.class, notes = "null if no user information")
-    public ResponseEntity<HashMap<Integer, Integer>> getShoppingList(@PathVariable String userName){
+    public ResponseEntity<HashMap<String, String>> getShoppingList(@PathVariable String userName){
         HttpHeaders httpHeaders = new HttpHeaders();
         SearchResultVO resultVO = userService.findShoppingListById(userName);
 
@@ -85,7 +91,7 @@ public class SimpleController {
                 return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(makeBadReqBody("User not exists"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(GET /list/{username}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -95,7 +101,7 @@ public class SimpleController {
     //POST method
     @PostMapping("/list/{userName}/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new item to shopping list", response = SearchResultVO.class)
-    public ResponseEntity<HashMap<Integer, Integer>> addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
+    public ResponseEntity<HashMap<String, String>> addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
         HttpHeaders httpHeaders = new HttpHeaders();
         SearchResultVO resultVO = userService.addShoppingListById(userName, itemName, itemCnt);
 
@@ -104,10 +110,10 @@ public class SimpleController {
                 return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.CREATED);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
             case Constants.VO_ITEM_NOT_EXIST:
                 httpHeaders.add("errorMessage", "Item not exists!");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -118,7 +124,7 @@ public class SimpleController {
 
     @GetMapping("/item")
     @ApiOperation(value = "Get item list")
-    public ResponseEntity<HashMap<String, Integer>> getItem(){
+    public ResponseEntity<HashMap<String, String>> getItem(){
         ItemResultVO resultVO = userService.getItemList();
         HttpHeaders httpHeaders = new HttpHeaders();
 
@@ -134,7 +140,7 @@ public class SimpleController {
 
     @PostMapping("/item/{itemName}/{itemCnt}")
     @ApiOperation(value = "Add new product")
-    public ResponseEntity<HashMap<String, Integer>> addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
+    public ResponseEntity<HashMap<String, String>> addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
         ItemResultVO resultVO = userService.addItemByName(itemName, itemCnt);
         HttpHeaders httpHeaders = new HttpHeaders();
 

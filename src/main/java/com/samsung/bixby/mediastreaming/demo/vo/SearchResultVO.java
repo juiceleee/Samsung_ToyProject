@@ -13,5 +13,5 @@ import java.util.HashMap;
 @Builder
 public class SearchResultVO {
     int status;
-    HashMap<Integer, Integer> shoppingList;
+    HashMap<String, String> shoppingList;
 }

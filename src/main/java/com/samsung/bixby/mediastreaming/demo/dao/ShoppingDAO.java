@@ -25,11 +25,19 @@ public class ShoppingDAO {
     //itemCnt : itemId, itemCnt
     private HashMap<Integer, Integer> itemCntDB = new HashMap<>();
 
+    public HashMap<String, String> changeMapToString(HashMap<?, ?> map){
+        HashMap<String, String> result = new HashMap<>();
+        for(HashMap.Entry<?, ?> entry : map.entrySet()){
+            result.put(entry.getKey().toString(), entry.getValue().toString());
+        }
+        return result;
+    }
+
 
     /** /user methods **/
     public UserResultVO getUserList() {
         return UserResultVO.builder()
-                            .map(userDB)
+                            .map(this.changeMapToString(this.userDB))
                             .status(Constants.VO_SUCCESS)
                             .build();
     }
@@ -44,10 +52,7 @@ public class ShoppingDAO {
             this.userDB.put(userName, this.userCnt);
             this.basketDB.put(this.userCnt, new HashMap<>()); //add empty basket
             this.userCnt += 1;
-            return UserResultVO.builder()
-                                .map(this.userDB)
-                                .status(Constants.VO_SUCCESS)
-                                .build();
+            return getUserList();
         }
 
     }
@@ -71,7 +76,7 @@ public class ShoppingDAO {
                                     .build();
         else {
             return SearchResultVO.builder()
-                    .shoppingList(this.basketDB.get(this.getUserIdByName(userName)))
+                    .shoppingList(this.changeMapToString(this.basketDB.get(this.getUserIdByName(userName))))
                     .status(Constants.VO_SUCCESS)
                     .build();
         }
@@ -145,7 +150,7 @@ public class ShoppingDAO {
 
         return ItemResultVO.builder()
                 .status(Constants.VO_SUCCESS)
-                .map(temp)
+                .map(changeMapToString(temp))
                 .build();
     }
 }
