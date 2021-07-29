@@ -23,6 +23,10 @@ public class HttpInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         logger.info("=== Before Method ===");
+        String contentType = request.getContentType();
+        String requestId = request.getHeader("requestId");
+        logger.info("contentType : " + contentType);
+        logger.info("requestId : " + requestId);
         return true;
     }
 
