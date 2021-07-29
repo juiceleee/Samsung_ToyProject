@@ -1,6 +1,5 @@
 package com.samsung.bixby.mediastreaming.demo.vo;
 
-import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +10,7 @@ import java.util.HashMap;
 @Data
 @AllArgsConstructor
 @Builder
-public class SearchResultVO {
-    int status;
-    HashMap<String, String> shoppingList;
+public class BasketResponseVO {
+    String resultCode;
+    HashMap<Integer, Integer> resultData;
 }

@@ -2,12 +2,10 @@ package com.samsung.bixby.mediastreaming.demo.service;
 
 import com.samsung.bixby.mediastreaming.demo.dao.ShoppingDAO;
 import com.samsung.bixby.mediastreaming.demo.vo.ItemResultVO;
-import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
+import com.samsung.bixby.mediastreaming.demo.vo.BasketResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 
 @Service
 public class MediaSearchService {
@@ -18,11 +16,11 @@ public class MediaSearchService {
         this.shoppingDAO = shoppingDAO;
     }
 
-    public SearchResultVO findShoppingListById(String userName) {
+    public BasketResultVO findShoppingListById(String userName) {
         return shoppingDAO.getShoppingListById(userName);
     }
 
-    public SearchResultVO addShoppingListById(String userName, String itemName ,Integer itemCnt) {
+    public BasketResultVO addShoppingListById(String userName, String itemName , Integer itemCnt) {
         return shoppingDAO.addShoppingListById(userName, itemName, itemCnt);
     }
 
@@ -50,15 +48,15 @@ public class MediaSearchService {
         return shoppingDAO.changeUser(oldUserName, newUserName);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
+    public BasketResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
         return shoppingDAO.deleteItemFromShoppingList(userName, itemName, itemCnt);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName) {
+    public BasketResultVO deleteItemFromShoppingList(String userName, String itemName) {
         return shoppingDAO.deleteItemFromShoppingList(userName, itemName);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName) {
+    public BasketResultVO deleteItemFromShoppingList(String userName) {
         return shoppingDAO.deleteItemFromShoppingList(userName);
     }
 

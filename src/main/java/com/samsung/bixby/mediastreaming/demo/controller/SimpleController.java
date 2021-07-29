@@ -51,10 +51,10 @@ public class SimpleController {
 
     }
 
-    @PostMapping("/user/{userName}")
+    @PostMapping("/user")
     @ApiOperation(value = "Add new user to DB", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addUser(@PathVariable String userName){
-        UserResultVO resultVO = userService.addUser(userName);
+    public ResponseEntity<HashMap<String, String>> addUser(@RequestBody UserRequestVO userRequestVO){
+        UserResultVO resultVO = userService.addUser(userRequestVO.getUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -69,10 +69,10 @@ public class SimpleController {
         }
     }
 
-    @DeleteMapping("/user/{userName}")
+    @DeleteMapping("/user")
     @ApiOperation(value = "Delete user specified by username", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteUser(@PathVariable String userName){
-        UserResultVO resultVO = userService.deleteUser(userName);
+    public ResponseEntity<HashMap<String, String>> deleteUser(@RequestBody UserRequestVO userRequestVO){
+        UserResultVO resultVO = userService.deleteUser(userRequestVO.getUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -87,10 +87,10 @@ public class SimpleController {
         }
     }
 
-    @PutMapping("/user/{oldUserName}/{newUserName}")
+    @PutMapping("/user")
     @ApiOperation(value = "Change user name to new one", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> changeUser(@PathVariable String oldUserName, @PathVariable String newUserName){
-        UserResultVO resultVO = userService.changeUser(oldUserName, newUserName);
+    public ResponseEntity<HashMap<String, String>> changeUser(@RequestBody UserRequestVO userRequestVO){
+        UserResultVO resultVO = userService.changeUser(userRequestVO.getOldUserName(), userRequestVO.getNewUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -109,12 +109,12 @@ public class SimpleController {
     }
 
 
-    /** /list methods **/
-    @GetMapping("/list/{userName}")
+    /** /basket methods **/
+    @GetMapping("/basket")
     @ApiOperation(value = "Browse shopping list by username", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getShoppingList(@PathVariable String userName){
+    public ResponseEntity<HashMap<String, String>> getShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         HttpHeaders httpHeaders = new HttpHeaders();
-        SearchResultVO resultVO = userService.findShoppingListById(userName);
+        BasketResultVO resultVO = userService.findShoppingListById(basketRequestVO.getUserName());
 
         switch(resultVO.getStatus()) {
             case Constants.VO_SUCCESS:
@@ -128,11 +128,13 @@ public class SimpleController {
         }
     }
 
-    @PostMapping("/list/{userName}/{itemName}/{itemCnt}")
+    @PostMapping("/basket")
     @ApiOperation(value = "Add new item to shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
+    public ResponseEntity<HashMap<String, String>> addShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         HttpHeaders httpHeaders = new HttpHeaders();
-        SearchResultVO resultVO = userService.addShoppingListById(userName, itemName, itemCnt);
+        BasketResultVO resultVO = userService.addShoppingListById(basketRequestVO.getUserName(),
+                                                                    basketRequestVO.getItemName(),
+                                                                    basketRequestVO.getItemCnt());
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
@@ -143,74 +145,48 @@ public class SimpleController {
             case Constants.VO_ITEM_NOT_EXIST:
                 httpHeaders.add("errorMessage", "Item not exists!");
                 return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("/basket")
+    @ApiOperation(value="Delete item from shopping list", response = ResponseEntity.class)
+    public ResponseEntity<HashMap<String, String>> deleteItemEntry(@RequestBody BasketRequestVO basketRequestVO){
+
+        String userName = basketRequestVO.getUserName();
+        String itemName = basketRequestVO.getItemName();
+        Integer itemCnt = basketRequestVO.getItemCnt();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        BasketResultVO resultVO;
+
+        if(itemName == null)
+            resultVO = userService.deleteItemFromShoppingList(userName);
+        else if(itemCnt == null)
+            resultVO = userService.deleteItemFromShoppingList(userName, itemName);
+        else
+            resultVO = userService.deleteItemFromShoppingList(userName, itemName, itemCnt);
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exists!");
+                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_NOT_EXIST:
+                httpHeaders.add("errorMessage", "Item not exists!");
+                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
             case Constants.VO_ITEM_CNT_TOO_MUCH:
-                httpHeaders.add("errorMessage", "Removing too much items!");
-                return new ResponseEntity<>(makeBadReqBody("Removing too much items!"), httpHeaders, HttpStatus.BAD_REQUEST);
+                httpHeaders.add("errorMessage", "Deleting too many item!");
+                return new ResponseEntity<>(makeBadReqBody("Deleting too many item!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/list/{userName}/{itemName}/{itemCnt}")
-    @ApiOperation(value = "Delete specific number of item from shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItemFromShoppingList(@PathVariable String userName, @PathVariable String itemName, @PathVariable Integer itemCnt){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        SearchResultVO resultVO = userService.deleteItemFromShoppingList(userName, itemName, itemCnt);
-
-        switch(resultVO.getStatus()){
-            case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
-            case Constants.VO_USER_NOT_EXIST:
-                httpHeaders.add("errorMessage", "User not exists!");
-                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            case Constants.VO_ITEM_NOT_EXIST:
-                httpHeaders.add("errorMessage", "Item not exists!");
-                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            default:
-                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/list/{userName}/{itemName}")
-    @ApiOperation(value = "Delete specific item from shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItemFromShoppingList(@PathVariable String userName, @PathVariable String itemName){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        SearchResultVO resultVO = userService.deleteItemFromShoppingList(userName, itemName);
-
-        switch(resultVO.getStatus()){
-            case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
-            case Constants.VO_USER_NOT_EXIST:
-                httpHeaders.add("errorMessage", "User not exists!");
-                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            case Constants.VO_ITEM_NOT_EXIST:
-                httpHeaders.add("errorMessage", "Item not exists!");
-                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            default:
-                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/list/{userName}")
-    @ApiOperation(value = "Delete basket of specific user", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItemFromShoppingList(@PathVariable String userName){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        SearchResultVO resultVO = userService.deleteItemFromShoppingList(userName);
-
-        switch(resultVO.getStatus()){
-            case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
-            case Constants.VO_USER_NOT_EXIST:
-                httpHeaders.add("errorMessage", "User not exists!");
-                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            default:
-                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     /** /item methods **/
 
@@ -230,10 +206,10 @@ public class SimpleController {
         }
     }
 
-    @PostMapping("/item/{itemName}/{itemCnt}")
+    @PostMapping("/item")
     @ApiOperation(value = "Add new product", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
-        ItemResultVO resultVO = userService.addItemByName(itemName, itemCnt);
+    public ResponseEntity<HashMap<String, String>> addItem(@RequestBody ItemRequestVO itemRequestVO){
+        ItemResultVO resultVO = userService.addItemByName(itemRequestVO.getItemName(), itemRequestVO.getItemCnt());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){
@@ -245,30 +221,20 @@ public class SimpleController {
         }
     }
 
-    @DeleteMapping("/item/{itemName}")
+    @DeleteMapping("/item")
     @ApiOperation(value = "Delete item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItem(@PathVariable String itemName){
-        ItemResultVO resultVO = userService.deleteItem(itemName);
+    public ResponseEntity<HashMap<String, String>> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
+
+        String itemName = itemRequestVO.getItemName();
+        Integer itemCnt = itemRequestVO.getItemCnt();
+
+        ItemResultVO resultVO;
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        switch(resultVO.getStatus()){
-            case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
-            case Constants.VO_ITEM_NOT_EXIST:
-                httpHeaders.add("errorMessage", "Item not exists!");
-                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
-            default:
-                httpHeaders.add("errorMessage", "Should not reach here(POST /item/{itemName}/{itemCnt}");
-                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @DeleteMapping("/item/{itemName}/{itemCnt}")
-    @ApiOperation(value = "Delete specific number of item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItem(@PathVariable String itemName, @PathVariable Integer itemCnt){
-        ItemResultVO resultVO = userService.deleteItem(itemName, itemCnt);
-        HttpHeaders httpHeaders = new HttpHeaders();
+        if(itemCnt == null)
+            resultVO = userService.deleteItem(itemName);
+        else
+            resultVO = userService.deleteItem(itemName, itemCnt);
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
@@ -285,10 +251,10 @@ public class SimpleController {
         }
     }
 
-    @PutMapping("item/{oldName}/{newName}")
+    @PutMapping("/item")
     @ApiOperation(value = "Change the name of item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> changeItemName(@PathVariable String oldName, @PathVariable String newName){
-        ItemResultVO resultVO = userService.changeItemName(oldName, newName);
+    public ResponseEntity<HashMap<String, String>> changeItemName(@RequestBody ItemRequestVO itemRequestVO){
+        ItemResultVO resultVO = userService.changeItemName(itemRequestVO.getOldName(), itemRequestVO.getNewName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){

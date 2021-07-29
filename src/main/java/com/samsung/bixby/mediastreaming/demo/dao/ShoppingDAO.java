@@ -3,16 +3,11 @@ package com.samsung.bixby.mediastreaming.demo.dao;
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.mockDB.DB;
 import com.samsung.bixby.mediastreaming.demo.vo.ItemResultVO;
-import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
+import com.samsung.bixby.mediastreaming.demo.vo.BasketResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserResultVO;
-import jdk.jpackage.internal.Log;
-import org.apache.tomcat.util.bcel.Const;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
-import java.util.Map;
-import java.util.function.ToDoubleBiFunction;
 
 @Repository
 public class ShoppingDAO {
@@ -91,16 +86,16 @@ public class ShoppingDAO {
         return db.userDB.get(userName);
     }
 
-    /** /list methods **/
+    /** /basket methods **/
 
-    public SearchResultVO getShoppingListById(String userName) {
+    public BasketResultVO getShoppingListById(String userName) {
         if(!isUserName(userName))
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                                     .shoppingList(null)
                                     .status(Constants.VO_USER_NOT_EXIST)
                                     .build();
         else {
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(this.changeMapToString(db.basketDB.get(this.getUserIdByName(userName))))
                     .status(Constants.VO_SUCCESS)
                     .build();
@@ -109,14 +104,14 @@ public class ShoppingDAO {
 
     }
 
-    public SearchResultVO addShoppingListById(String userName, String itemName, Integer itemCnt) {
+    public BasketResultVO addShoppingListById(String userName, String itemName, Integer itemCnt) {
         if(!this.isItem(itemName)) //item not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                                     .shoppingList(null)
                                     .status(Constants.VO_ITEM_NOT_EXIST)
                                     .build();
         if(!this.isUserName(userName)) //user not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                                     .shoppingList(null)
                                     .status(Constants.VO_USER_NOT_EXIST)
                                     .build();
@@ -141,14 +136,14 @@ public class ShoppingDAO {
         return this.getShoppingListById(userName);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
+    public BasketResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
         if(!this.isItem(itemName)) //item not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_ITEM_NOT_EXIST)
                     .build();
         if(!this.isUserName(userName)) //user not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_USER_NOT_EXIST)
                     .build();
@@ -157,14 +152,14 @@ public class ShoppingDAO {
         Integer userId = this.getUserIdByName(userName);
 
         if(!db.basketDB.get(userId).containsKey(itemId)) // item not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_ITEM_NOT_EXIST)
                     .build();
 
         Integer curItemCnt = db.basketDB.get(userId).get(itemId);
         if(curItemCnt < itemCnt)
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_ITEM_CNT_TOO_MUCH)
                     .build();
@@ -177,14 +172,14 @@ public class ShoppingDAO {
         return this.getShoppingListById(userName);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName) {
+    public BasketResultVO deleteItemFromShoppingList(String userName, String itemName) {
         if(!this.isItem(itemName)) //item not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_ITEM_NOT_EXIST)
                     .build();
         if(!this.isUserName(userName)) //user not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_USER_NOT_EXIST)
                     .build();
@@ -193,7 +188,7 @@ public class ShoppingDAO {
         Integer userId = this.getUserIdByName(userName);
 
         if(!db.basketDB.get(userId).containsKey(itemId)) // item not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_ITEM_NOT_EXIST)
                     .build();
@@ -202,9 +197,9 @@ public class ShoppingDAO {
         return this.getShoppingListById(userName);
     }
 
-    public SearchResultVO deleteItemFromShoppingList(String userName) {
+    public BasketResultVO deleteItemFromShoppingList(String userName) {
         if(!this.isUserName(userName)) //user not exist
-            return SearchResultVO.builder()
+            return BasketResultVO.builder()
                     .shoppingList(null)
                     .status(Constants.VO_USER_NOT_EXIST)
                     .build();
