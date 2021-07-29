@@ -49,4 +49,28 @@ public class MediaSearchService {
     public UserResultVO changeUser(String oldUserName, String newUserName) {
         return shoppingDAO.changeUser(oldUserName, newUserName);
     }
+
+    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
+        return shoppingDAO.deleteItemFromShoppingList(userName, itemName, itemCnt);
+    }
+
+    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName) {
+        return shoppingDAO.deleteItemFromShoppingList(userName, itemName);
+    }
+
+    public SearchResultVO deleteItemFromShoppingList(String userName) {
+        return shoppingDAO.deleteItemFromShoppingList(userName);
+    }
+
+    public ItemResultVO deleteItem(String itemName, Integer itemCnt) {
+        return shoppingDAO.deleteItem(itemName, itemCnt);
+    }
+
+    public ItemResultVO deleteItem(String itemName) {
+        return shoppingDAO.deleteItem(itemName);
+    }
+
+    public ItemResultVO changeItemName(String oldName, String newName) {
+        return shoppingDAO.changeItemName(oldName, newName);
+    }
 }

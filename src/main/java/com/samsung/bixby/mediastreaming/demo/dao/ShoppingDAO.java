@@ -6,11 +6,13 @@ import com.samsung.bixby.mediastreaming.demo.vo.ItemResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.SearchResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserResultVO;
 import jdk.jpackage.internal.Log;
+import org.apache.tomcat.util.bcel.Const;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.ToDoubleBiFunction;
 
 @Repository
 public class ShoppingDAO {
@@ -89,7 +91,6 @@ public class ShoppingDAO {
         return db.userDB.get(userName);
     }
 
-
     /** /list methods **/
 
     public SearchResultVO getShoppingListById(String userName) {
@@ -140,6 +141,81 @@ public class ShoppingDAO {
         return this.getShoppingListById(userName);
     }
 
+    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName, Integer itemCnt) {
+        if(!this.isItem(itemName)) //item not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+        if(!this.isUserName(userName)) //user not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_USER_NOT_EXIST)
+                    .build();
+
+        Integer itemId = this.getItemIdByName(itemName);
+        Integer userId = this.getUserIdByName(userName);
+
+        if(!db.basketDB.get(userId).containsKey(itemId)) // item not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+
+        Integer curItemCnt = db.basketDB.get(userId).get(itemId);
+        if(curItemCnt < itemCnt)
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_ITEM_CNT_TOO_MUCH)
+                    .build();
+
+        db.basketDB.get(userId).remove(itemId);
+
+        if(!(curItemCnt == itemCnt))
+            db.basketDB.get(userId).put(itemId, curItemCnt - itemCnt);
+
+        return this.getShoppingListById(userName);
+    }
+
+    public SearchResultVO deleteItemFromShoppingList(String userName, String itemName) {
+        if(!this.isItem(itemName)) //item not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+        if(!this.isUserName(userName)) //user not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_USER_NOT_EXIST)
+                    .build();
+
+        Integer itemId = this.getItemIdByName(itemName);
+        Integer userId = this.getUserIdByName(userName);
+
+        if(!db.basketDB.get(userId).containsKey(itemId)) // item not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+
+        db.basketDB.get(userId).remove(itemId);
+        return this.getShoppingListById(userName);
+    }
+
+    public SearchResultVO deleteItemFromShoppingList(String userName) {
+        if(!this.isUserName(userName)) //user not exist
+            return SearchResultVO.builder()
+                    .shoppingList(null)
+                    .status(Constants.VO_USER_NOT_EXIST)
+                    .build();
+
+        Integer userId = this.getUserIdByName(userName);
+
+        db.basketDB.remove(userId);
+        db.basketDB.put(userId, new HashMap<>());
+        return this.getShoppingListById(userName);
+    }
+
     /** /item methods **/
 
     private boolean isItem(String itemName) {
@@ -149,6 +225,8 @@ public class ShoppingDAO {
     private Integer getItemIdByName(String itemName){
         return db.itemIdDB.get(itemName);
     }
+
+    private Integer getItemCntById(Integer itemId){ return db.itemCntDB.get(itemId); }
 
 
     public ItemResultVO addItemByName(String itemName, Integer itemCnt) {
@@ -176,5 +254,63 @@ public class ShoppingDAO {
                 .status(Constants.VO_SUCCESS)
                 .map(changeMapToString(temp))
                 .build();
+    }
+
+    //TODO : Check item in user basket overflows
+    public ItemResultVO deleteItem(String itemName, Integer itemCnt){
+        if(!this.isItem(itemName))
+            return ItemResultVO.builder()
+                                .map(null)
+                                .status(Constants.VO_ITEM_NOT_EXIST)
+                                .build();
+
+        Integer itemId = this.getItemIdByName(itemName);
+        Integer curItemCnt = this.getItemCntById(itemId);
+
+        if(curItemCnt < itemCnt)
+            return ItemResultVO.builder()
+                                .map(null)
+                                .status(Constants.VO_ITEM_CNT_TOO_MUCH)
+                                .build();
+
+        db.itemCntDB.remove(itemId);
+
+        if(!(curItemCnt == itemCnt))
+            db.itemCntDB.put(itemId, curItemCnt - itemCnt);
+
+        return getItemList();
+    }
+
+    public ItemResultVO deleteItem(String itemName){
+        if(!this.isItem(itemName))
+            return ItemResultVO.builder()
+                    .map(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+
+        Integer itemId = this.getItemIdByName(itemName);
+        db.itemCntDB.remove(itemId);
+
+        return getItemList();
+    }
+
+
+    public ItemResultVO changeItemName(String oldName, String newName) {
+        if(!this.isItem(oldName))
+            return ItemResultVO.builder()
+                    .map(null)
+                    .status(Constants.VO_ITEM_NOT_EXIST)
+                    .build();
+        if(this.isItem(newName))
+            return ItemResultVO.builder()
+                    .map(null)
+                    .status(Constants.VO_ITEM_ALREADY_EXIST)
+                    .build();
+
+        Integer itemId = this.getItemIdByName(oldName);
+        db.itemIdDB.remove(oldName);
+        db.itemIdDB.put(newName, itemId);
+
+        return getItemList();
     }
 }
