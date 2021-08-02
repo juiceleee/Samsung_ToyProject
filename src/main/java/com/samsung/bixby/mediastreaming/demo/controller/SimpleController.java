@@ -2,7 +2,7 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 
 
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
-import com.samsung.bixby.mediastreaming.demo.service.MediaSearchService;
+import com.samsung.bixby.mediastreaming.demo.service.ShoppingService;
 import com.samsung.bixby.mediastreaming.demo.vo.*;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 @ApiResponses(value = {@ApiResponse(code=404, message = "Not Found"),
                         @ApiResponse(code = 500, message = "Internal Server Error")})
 public class SimpleController {
-    private MediaSearchService userService;
+    private ShoppingService userService;
 
     public HashMap<String, String> makeBadReqBody(String str) {
         HashMap<String, String> result = new HashMap<>();
@@ -28,7 +28,7 @@ public class SimpleController {
     }
 
     @Autowired
-    public SimpleController(MediaSearchService userService) {
+    public SimpleController(ShoppingService userService) {
         this.userService = userService;
     }
 
@@ -37,7 +37,7 @@ public class SimpleController {
     @GetMapping("/user")
     @ApiOperation(value = "Get current user list", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> getUserList(){
-        UserResultVO resultVO = userService.getUserList();
+        ResultVO resultVO = userService.getUserList();
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -54,7 +54,7 @@ public class SimpleController {
     @PostMapping("/user")
     @ApiOperation(value = "Add new user to DB", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> addUser(@RequestBody UserRequestVO userRequestVO){
-        UserResultVO resultVO = userService.addUser(userRequestVO.getUserName());
+        ResultVO resultVO = userService.addUser(userRequestVO.getUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -72,7 +72,7 @@ public class SimpleController {
     @DeleteMapping("/user")
     @ApiOperation(value = "Delete user specified by username", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> deleteUser(@RequestBody UserRequestVO userRequestVO){
-        UserResultVO resultVO = userService.deleteUser(userRequestVO.getUserName());
+        ResultVO resultVO = userService.deleteUser(userRequestVO.getUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -90,7 +90,7 @@ public class SimpleController {
     @PutMapping("/user")
     @ApiOperation(value = "Change user name to new one", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> changeUser(@RequestBody UserRequestVO userRequestVO){
-        UserResultVO resultVO = userService.changeUser(userRequestVO.getOldUserName(), userRequestVO.getNewUserName());
+        ResultVO resultVO = userService.changeUser(userRequestVO.getOldUserName(), userRequestVO.getNewUserName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()) {
@@ -114,11 +114,11 @@ public class SimpleController {
     @ApiOperation(value = "Browse shopping list by username", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> getShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         HttpHeaders httpHeaders = new HttpHeaders();
-        BasketResultVO resultVO = userService.findShoppingListById(basketRequestVO.getUserName());
+        ResultVO resultVO = userService.getShoppingListById(basketRequestVO.getUserName());
 
         switch(resultVO.getStatus()) {
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -132,13 +132,13 @@ public class SimpleController {
     @ApiOperation(value = "Add new item to shopping list", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> addShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         HttpHeaders httpHeaders = new HttpHeaders();
-        BasketResultVO resultVO = userService.addShoppingListById(basketRequestVO.getUserName(),
-                                                                    basketRequestVO.getItemName(),
-                                                                    basketRequestVO.getItemCnt());
+        ResultVO resultVO = userService.addShoppingListById(basketRequestVO.getUserName(),
+                                                            basketRequestVO.getItemName(),
+                                                            basketRequestVO.getItemCnt());
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.CREATED);
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -160,7 +160,7 @@ public class SimpleController {
         Integer itemCnt = basketRequestVO.getItemCnt();
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        BasketResultVO resultVO;
+        ResultVO resultVO;
 
         if(itemName == null)
             resultVO = userService.deleteItemFromShoppingList(userName);
@@ -171,7 +171,7 @@ public class SimpleController {
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getShoppingList(), HttpStatus.OK);
+                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -193,7 +193,7 @@ public class SimpleController {
     @GetMapping("/item")
     @ApiOperation(value = "Get item list", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> getItem(){
-        ItemResultVO resultVO = userService.getItemList();
+        ResultVO resultVO = userService.getItemList();
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){
@@ -209,12 +209,15 @@ public class SimpleController {
     @PostMapping("/item")
     @ApiOperation(value = "Add new product", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> addItem(@RequestBody ItemRequestVO itemRequestVO){
-        ItemResultVO resultVO = userService.addItemByName(itemRequestVO.getItemName(), itemRequestVO.getItemCnt());
+        ResultVO resultVO = userService.addItemByName(itemRequestVO.getItemName(), itemRequestVO.getItemCnt());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
                 return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+            case Constants.VO_ITEM_ALREADY_EXIST:
+                httpHeaders.add("errorMessage", "Item already exists!");
+                return new ResponseEntity<>(makeBadReqBody("Item already exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /item/{itemName}/{itemCnt}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -228,7 +231,7 @@ public class SimpleController {
         String itemName = itemRequestVO.getItemName();
         Integer itemCnt = itemRequestVO.getItemCnt();
 
-        ItemResultVO resultVO;
+        ResultVO resultVO;
         HttpHeaders httpHeaders = new HttpHeaders();
 
         if(itemCnt == null)
@@ -254,7 +257,7 @@ public class SimpleController {
     @PutMapping("/item")
     @ApiOperation(value = "Change the name of item", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> changeItemName(@RequestBody ItemRequestVO itemRequestVO){
-        ItemResultVO resultVO = userService.changeItemName(itemRequestVO.getOldName(), itemRequestVO.getNewName());
+        ResultVO resultVO = userService.changeItemName(itemRequestVO.getOldName(), itemRequestVO.getNewName());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){

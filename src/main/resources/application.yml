@@ -1,15 +1,15 @@
 server:
   address: localhost
   port: 8080
-#spring:
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    password:
-#    url: jdbc:mysql://localhost:3306/demo
-#    username: root
-#  jpa:
-#    database: MYSQL
-#    show-sql: true
-#    generate-ddl: true
-#    hibernate:
-#      ddl-auto: none
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: 1234
+    url: jdbc:mysql://localhost:3306/demo
+    username: juicelee
+  jpa:
+    database: MYSQL
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
