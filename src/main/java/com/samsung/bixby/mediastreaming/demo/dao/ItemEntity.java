@@ -21,5 +21,5 @@ public class ItemEntity {
     private String itemname;
 
     @Column
-    private Integer itemcnt;
+    private Integer stock;
 }

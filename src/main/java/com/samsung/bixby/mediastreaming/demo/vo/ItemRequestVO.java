@@ -9,7 +9,7 @@ import lombok.Data;
 @Builder
 public class ItemRequestVO {
     private String itemName;
-    private Integer itemCnt;
+    private Integer stock;
     private String oldName;
     private String newName;
 }

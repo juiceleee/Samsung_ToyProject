@@ -77,7 +77,7 @@ public class SimpleController {
 
         switch(resultVO.getStatus()) {
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exist!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -95,7 +95,7 @@ public class SimpleController {
 
         switch(resultVO.getStatus()) {
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exist!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -151,27 +151,53 @@ public class SimpleController {
         }
     }
 
+    @PutMapping("/basket")
+    @ApiOperation(value="Delete item from shopping list", response = ResponseEntity.class)
+    public ResponseEntity<HashMap<String, String>> updateItemEntry(@RequestBody BasketRequestVO basketRequestVO){
+        String userName = basketRequestVO.getUserName();
+        String itemName = basketRequestVO.getItemName();
+        Integer itemCnt = basketRequestVO.getItemCnt();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        ResultVO resultVO = userService.updateItemFromShoppingList(userName, itemName, itemCnt);
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            case Constants.VO_USER_NOT_EXIST:
+                httpHeaders.add("errorMessage", "User not exists!");
+                return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_NOT_EXIST:
+                httpHeaders.add("errorMessage", "Item not exists!");
+                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_CNT_TOO_MUCH:
+                httpHeaders.add("errorMessage", "Deleting too many item!");
+                return new ResponseEntity<>(makeBadReqBody("Deleting too many item!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @DeleteMapping("/basket")
     @ApiOperation(value="Delete item from shopping list", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> deleteItemEntry(@RequestBody BasketRequestVO basketRequestVO){
 
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
-        Integer itemCnt = basketRequestVO.getItemCnt();
 
         HttpHeaders httpHeaders = new HttpHeaders();
         ResultVO resultVO;
 
         if(itemName == null)
             resultVO = userService.deleteItemFromShoppingList(userName);
-        else if(itemCnt == null)
-            resultVO = userService.deleteItemFromShoppingList(userName, itemName);
         else
-            resultVO = userService.deleteItemFromShoppingList(userName, itemName, itemCnt);
+            resultVO = userService.deleteItemFromShoppingList(userName, itemName);
+
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             case Constants.VO_USER_NOT_EXIST:
                 httpHeaders.add("errorMessage", "User not exists!");
                 return new ResponseEntity<>(makeBadReqBody("User not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -209,7 +235,7 @@ public class SimpleController {
     @PostMapping("/item")
     @ApiOperation(value = "Add new product", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> addItem(@RequestBody ItemRequestVO itemRequestVO){
-        ResultVO resultVO = userService.addItemByName(itemRequestVO.getItemName(), itemRequestVO.getItemCnt());
+        ResultVO resultVO = userService.addItemByName(itemRequestVO.getItemName(), itemRequestVO.getStock());
         HttpHeaders httpHeaders = new HttpHeaders();
 
         switch(resultVO.getStatus()){
@@ -224,24 +250,18 @@ public class SimpleController {
         }
     }
 
-    @DeleteMapping("/item")
-    @ApiOperation(value = "Delete item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
-
+    @PutMapping("/item")
+    @ApiOperation(value = "Change item number", response = ResponseEntity.class)
+    public ResponseEntity<HashMap<String, String>> updateItem(@RequestBody ItemRequestVO itemRequestVO){
         String itemName = itemRequestVO.getItemName();
-        Integer itemCnt = itemRequestVO.getItemCnt();
+        Integer itemStock = itemRequestVO.getStock();
 
-        ResultVO resultVO;
+        ResultVO resultVO = userService.updateItem(itemName, itemStock);
         HttpHeaders httpHeaders = new HttpHeaders();
-
-        if(itemCnt == null)
-            resultVO = userService.deleteItem(itemName);
-        else
-            resultVO = userService.deleteItem(itemName, itemCnt);
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             case Constants.VO_ITEM_NOT_EXIST:
                 httpHeaders.add("errorMessage", "Item not exists!");
                 return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
@@ -254,7 +274,31 @@ public class SimpleController {
         }
     }
 
-    @PutMapping("/item")
+    @DeleteMapping("/item")
+    @ApiOperation(value = "Delete item", response = ResponseEntity.class)
+    public ResponseEntity<HashMap<String, String>> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
+
+        String itemName = itemRequestVO.getItemName();
+
+        ResultVO resultVO;
+        HttpHeaders httpHeaders = new HttpHeaders();
+
+        resultVO = userService.deleteItem(itemName);
+
+
+        switch(resultVO.getStatus()){
+            case Constants.VO_SUCCESS:
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            case Constants.VO_ITEM_NOT_EXIST:
+                httpHeaders.add("errorMessage", "Item not exists!");
+                return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            default:
+                httpHeaders.add("errorMessage", "Should not reach here(POST /item/{itemName}/{itemCnt}");
+                return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/item/name")
     @ApiOperation(value = "Change the name of item", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> changeItemName(@RequestBody ItemRequestVO itemRequestVO){
         ResultVO resultVO = userService.changeItemName(itemRequestVO.getOldName(), itemRequestVO.getNewName());
@@ -262,7 +306,7 @@ public class SimpleController {
 
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
-                return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             case Constants.VO_ITEM_NOT_EXIST:
                 httpHeaders.add("errorMessage", "Item not exists!");
                 return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
