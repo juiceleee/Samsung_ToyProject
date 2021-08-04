@@ -17,11 +17,13 @@ public class BasketEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer rownum;
 
-    @Column
-    private Integer userid;
+    @ManyToOne
+    @JoinColumn
+    private UserEntity user;
 
-    @Column
-    private Integer itemid;
+    @ManyToOne
+    @JoinColumn
+    private ItemEntity item;
 
     @Column
     private Integer itemcnt;

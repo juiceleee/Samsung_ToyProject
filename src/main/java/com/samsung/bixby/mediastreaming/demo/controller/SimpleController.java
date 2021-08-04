@@ -145,6 +145,9 @@ public class SimpleController {
             case Constants.VO_ITEM_NOT_EXIST:
                 httpHeaders.add("errorMessage", "Item not exists!");
                 return new ResponseEntity<>(makeBadReqBody("Item not exists!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_OUT_OF_STOCK:
+                httpHeaders.add("errorMessage", "Not enough stock!");
+                return new ResponseEntity<>(makeBadReqBody("Not enough stock!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -152,7 +155,7 @@ public class SimpleController {
     }
 
     @PutMapping("/basket")
-    @ApiOperation(value="Delete item from shopping list", response = ResponseEntity.class)
+    @ApiOperation(value="Update item from shopping list", response = ResponseEntity.class)
     public ResponseEntity<HashMap<String, String>> updateItemEntry(@RequestBody BasketRequestVO basketRequestVO){
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
@@ -173,6 +176,9 @@ public class SimpleController {
             case Constants.VO_ITEM_CNT_TOO_MUCH:
                 httpHeaders.add("errorMessage", "Deleting too many item!");
                 return new ResponseEntity<>(makeBadReqBody("Deleting too many item!"), httpHeaders, HttpStatus.BAD_REQUEST);
+            case Constants.VO_ITEM_OUT_OF_STOCK:
+                httpHeaders.add("errorMessage", "Not enough stock!");
+                return new ResponseEntity<>(makeBadReqBody("Not enough stock!"), httpHeaders, HttpStatus.BAD_REQUEST);
             default:
                 httpHeaders.add("errorMessage", "Should not reach here(POST /list/{username}/{itemName}/{itemCnt}");
                 return new ResponseEntity<>(null, httpHeaders, HttpStatus.INTERNAL_SERVER_ERROR);

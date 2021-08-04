@@ -11,17 +11,20 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BasketRepository extends JpaRepository<BasketEntity, Integer> {
-    List<BasketEntity> findByUserid(Integer i);
-    List<BasketEntity> findByUseridAndItemid(Integer userId, Integer itemId);
+    List<BasketEntity> findByUser(UserEntity user);
+    List<BasketEntity> findByUserAndItem(UserEntity user, ItemEntity item);
 
     @Transactional
-    void deleteByUserid(Integer userId);
+    void deleteByUser(UserEntity user);
 
     @Transactional
-    void deleteByItemidAndUserid(Integer itemId, Integer userId);
+    void deleteByItem(ItemEntity item);
+
+    @Transactional
+    void deleteByUserAndItem(UserEntity user, ItemEntity item);
 
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update BasketEntity b set b.itemcnt = :itemCnt where b.userid = :userId and b.itemid= :itemId")
-    void updateItemCnt(@Param(value = "itemCnt") Integer itemCnt, @Param(value = "userId") Integer userId, @Param(value="itemId") Integer itemId);
+    @Query("update BasketEntity b set b.itemcnt = :itemCnt where b.user = :user and b.item= :item")
+    void updateItemCnt(@Param(value = "itemCnt") Integer itemCnt, @Param(value = "user") UserEntity user, @Param(value="item") ItemEntity item);
 }

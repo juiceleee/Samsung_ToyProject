@@ -44,9 +44,9 @@ class DemoApplicationTests {
 
 	@BeforeEach
 	public void initialize() throws Exception{
+		basketRepository.deleteAll();
 		itemRepository.deleteAll();
 		userRepository.deleteAll();
-		basketRepository.deleteAll();
 	}
 
 	@Test
@@ -192,7 +192,104 @@ class DemoApplicationTests {
 
 		resultActions.andExpect(status().isBadRequest());
 
+	}
 
+	@Test
+	@DisplayName("Delete Item when in user basket")
+	public void deleteItemInBasket() throws Exception{
+		UserRequestVO requestVO = UserRequestVO.builder()
+				.userName("juicelee")
+				.build();
+
+		this.mockMvc.perform(post("/shopping/user")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(requestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		requestVO.setUserName("bwlee");
+
+		this.mockMvc.perform(post("/shopping/user")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(requestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+
+		ResultActions resultActions = this.mockMvc.perform(get("/shopping/user")
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("juicelee").value(""))
+				.andExpect(jsonPath("bwlee").value(""));
+
+		ItemRequestVO itemRequestVO = ItemRequestVO.builder()
+				.itemName("orange")
+				.stock(10)
+				.build();
+
+		resultActions = this.mockMvc.perform(post("/shopping/item")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions.andExpect(status().isCreated())
+				.andExpect(jsonPath("orange").value(10));
+
+		BasketRequestVO basketRequestVO = BasketRequestVO.builder()
+				.userName("juicelee")
+				.itemName("orange")
+				.itemCnt(4)
+				.build();
+
+		resultActions = this.mockMvc.perform(post("/shopping/basket")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(basketRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions.andExpect(status().isCreated())
+				.andExpect(jsonPath("orange").value(4));
+
+		basketRequestVO.setUserName("bwlee");
+
+		resultActions = this.mockMvc.perform(post("/shopping/basket")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(basketRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions.andExpect(status().isCreated())
+				.andExpect(jsonPath("orange").value(4));
+
+		itemRequestVO = ItemRequestVO.builder()
+				.itemName("orange")
+				.build();
+
+		resultActions = this.mockMvc.perform(get("/shopping/item")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("orange").value(2));
+
+		this.mockMvc.perform(delete("/shopping/item")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(itemRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		basketRequestVO = BasketRequestVO.builder().userName("juicelee").build();
+
+		resultActions = this.mockMvc.perform(get("/shopping/basket")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(basketRequestVO))
+				.accept(MediaType.APPLICATION_JSON));
+
+		resultActions
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(content().string("{}"));
 
 	}
 
