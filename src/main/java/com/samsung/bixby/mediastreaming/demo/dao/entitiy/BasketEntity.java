@@ -1,4 +1,4 @@
-package com.samsung.bixby.mediastreaming.demo.dao;
+package com.samsung.bixby.mediastreaming.demo.dao.entitiy;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +12,24 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Builder
-public class ItemEntity {
+public class BasketEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer itemid;
+    private Integer rownum;
+
+    @ManyToOne
+    @JoinColumn
+    private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn
+    private ItemEntity item;
 
     @Column
-    private String itemname;
+    private Integer itemcnt;
 
     @Column
-    private Integer stock;
+    private boolean isbought;
+
+
 }

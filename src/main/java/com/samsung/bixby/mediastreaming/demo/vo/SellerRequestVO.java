@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.HashMap;
-
 @Data
 @AllArgsConstructor
 @Builder
-public class ItemResponseVO {
-    String resultCode;
-    HashMap<String, Integer> map;
+public class SellerRequestVO {
+    private String sellerName;
+    private String oldSellerName;
+    private String newSellerName;
 }

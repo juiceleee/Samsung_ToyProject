@@ -8,6 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class ItemRequestVO {
+    private String sellerName;
     private String itemName;
     private Integer stock;
     private String oldName;
