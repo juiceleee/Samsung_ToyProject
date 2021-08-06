@@ -43,7 +43,7 @@ public class SellerService {
 
     public ResultVO addSeller(String sellerName){
         if(sellerRepository.isSellerExist(sellerName))
-            return buildError(Constants.VO_USER_ALREADY_EXIST);
+            return buildError(Constants.VO_SELLER_ALREADY_EXIST);
 
         SellerEntity seller = sellerRepository.save(SellerEntity.builder()
                                                                 .name(sellerName)
@@ -55,6 +55,9 @@ public class SellerService {
     }
 
     public ResultVO deleteSeller(String sellerName){
+        if(sellerRepository.isSellerNotExist(sellerName))
+            return buildError(Constants.VO_SELLER_NOT_EXIST);
+
         SellerEntity seller = sellerRepository.findByName(sellerName).get();
         List<ItemEntity> items = seller.getItems();
 
@@ -79,9 +82,9 @@ public class SellerService {
 
     public ResultVO changeSeller(String oldName, String newName){
         if(sellerRepository.isSellerNotExist(oldName))
-            return buildError(Constants.VO_USER_NOT_EXIST);
+            return buildError(Constants.VO_SELLER_NOT_EXIST);
         if(sellerRepository.isSellerExist(newName))
-            return buildError(Constants.VO_USER_ALREADY_EXIST);
+            return buildError(Constants.VO_SELLER_ALREADY_EXIST);
 
         sellerRepository.updateSellerName(oldName, newName);
         return sellerRepository.buildSuccessSeller((SellerEntity) null);

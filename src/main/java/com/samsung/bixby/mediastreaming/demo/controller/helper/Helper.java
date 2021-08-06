@@ -42,6 +42,10 @@ public class Helper {
                 return new ResponseEntity<>(makeBadReqBody("Item not in basket"), HttpStatus.BAD_REQUEST);
             case Constants.VO_ITEM_OWNER_NOT_SAME:
                 return new ResponseEntity<>(makeBadReqBody("Item owner not same"), HttpStatus.BAD_REQUEST);
+            case Constants.VO_SELLER_ALREADY_EXIST:
+                return new ResponseEntity<>(makeBadReqBody("Seller already exist"), HttpStatus.BAD_REQUEST);
+            case Constants.VO_SELLER_NOT_EXIST:
+                return new ResponseEntity<>(makeBadReqBody("Seller not exist"), HttpStatus.BAD_REQUEST);
             default:
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
