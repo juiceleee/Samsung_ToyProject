@@ -4,15 +4,23 @@ import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class SellerCustomRepositoryIimpl implements SellerCustomRepository {
+@Repository
+@Transactional
+public class SellerCustomRepositoryImpl implements SellerCustomRepository {
+
     @Autowired
+    @Lazy
     SellerRepository sellerRepository;
 
 
+    @Override
     public HashMap<String, String> sellerEntityToMap(List<SellerEntity> sellers){
         HashMap<String, String> map = new HashMap<>();
         for(SellerEntity seller: sellers){
@@ -21,12 +29,14 @@ public class SellerCustomRepositoryIimpl implements SellerCustomRepository {
         return map;
     }
 
+    @Override
     public HashMap<String, String> sellerEntityToMap(SellerEntity seller){
         HashMap<String, String> map = new HashMap<>();
         map.put(seller.getName(), "");
         return map;
     }
 
+    @Override
     public ResultVO buildSuccessSeller(List<SellerEntity> sellers){
         return ResultVO.builder()
                 .map(sellerEntityToMap(sellers))
@@ -34,6 +44,7 @@ public class SellerCustomRepositoryIimpl implements SellerCustomRepository {
                 .build();
     }
 
+    @Override
     public ResultVO buildSuccessSeller(SellerEntity seller){
         return ResultVO.builder()
                 .map(sellerEntityToMap(seller))
@@ -41,12 +52,14 @@ public class SellerCustomRepositoryIimpl implements SellerCustomRepository {
                 .build();
     }
 
-    public boolean isSellerExist(String sellerName){
+    @Override
+    public boolean SellerExist(String sellerName){
         return sellerRepository.findByName(sellerName).isPresent();
     }
 
-    public boolean isSellerNotExist(String sellerName){
-        return !isSellerExist(sellerName);
+    @Override
+    public boolean SellerNotExist(String sellerName){
+        return !SellerExist(sellerName);
     }
 
 }

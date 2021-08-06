@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.samsung.bixby.mediastreaming.demo.service.helper.Helper.buildError;
@@ -42,7 +41,7 @@ public class SellerService {
     }
 
     public ResultVO addSeller(String sellerName){
-        if(sellerRepository.isSellerExist(sellerName))
+        if(sellerRepository.SellerExist(sellerName))
             return buildError(Constants.VO_SELLER_ALREADY_EXIST);
 
         SellerEntity seller = sellerRepository.save(SellerEntity.builder()
@@ -55,7 +54,7 @@ public class SellerService {
     }
 
     public ResultVO deleteSeller(String sellerName){
-        if(sellerRepository.isSellerNotExist(sellerName))
+        if(sellerRepository.SellerNotExist(sellerName))
             return buildError(Constants.VO_SELLER_NOT_EXIST);
 
         SellerEntity seller = sellerRepository.findByName(sellerName).get();
@@ -81,9 +80,9 @@ public class SellerService {
 
 
     public ResultVO changeSeller(String oldName, String newName){
-        if(sellerRepository.isSellerNotExist(oldName))
+        if(sellerRepository.SellerNotExist(oldName))
             return buildError(Constants.VO_SELLER_NOT_EXIST);
-        if(sellerRepository.isSellerExist(newName))
+        if(sellerRepository.SellerExist(newName))
             return buildError(Constants.VO_SELLER_ALREADY_EXIST);
 
         sellerRepository.updateSellerName(oldName, newName);

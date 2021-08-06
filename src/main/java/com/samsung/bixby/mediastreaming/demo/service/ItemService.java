@@ -10,8 +10,6 @@ import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
-import java.util.List;
 
 import static com.samsung.bixby.mediastreaming.demo.service.helper.Helper.buildError;
 
@@ -51,7 +49,7 @@ public class ItemService {
 
 
     public ResultVO getItemListBySellerName(String sellerName){
-        if(sellerRepository.isSellerNotExist(sellerName))
+        if(sellerRepository.SellerNotExist(sellerName))
             return buildError(Constants.VO_USER_NOT_EXIST);
         return itemRepository.buildSuccessItem(sellerRepository.findByName(sellerName).get().getItems());
     }
@@ -64,7 +62,7 @@ public class ItemService {
     public ResultVO addItemByName(String sellerName, String itemName, Integer itemCnt){
         if(itemRepository.isItemExist(itemName))
             return buildError(Constants.VO_ITEM_ALREADY_EXIST);
-        if(sellerRepository.isSellerNotExist(sellerName))
+        if(sellerRepository.SellerNotExist(sellerName))
             return buildError(Constants.VO_USER_NOT_EXIST);
 
         SellerEntity seller = sellerRepository.findByName(sellerName).get();
@@ -82,7 +80,7 @@ public class ItemService {
     public ResultVO updateItem(String sellerName, String itemName, Integer itemStock){
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
-        if(sellerRepository.isSellerNotExist(sellerName))
+        if(sellerRepository.SellerNotExist(sellerName))
             return buildError(Constants.VO_USER_NOT_EXIST);
 
         ItemEntity item = itemRepository.findByItemname(itemName).get();

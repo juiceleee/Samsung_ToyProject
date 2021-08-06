@@ -4,22 +4,32 @@ import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.UserEntity;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 
+@Repository
+@Transactional
 public class UserCustomRepositoryImpl implements UserCustomRepository{
+
     @Autowired
+    @Lazy
     UserRepository userRepository;
 
-    public boolean isUserExist(String userName){
+    @Override
+    public boolean UserExist(String userName){
         return userRepository.findByUsername(userName).isPresent();
     }
 
-    public boolean isUserNotExist(String userName){
-        return !isUserExist(userName);
+    @Override
+    public boolean UserNotExist(String userName){
+        return !UserExist(userName);
     }
 
+    @Override
     public ResultVO buildSuccessUser(List<UserEntity> users){
         return ResultVO.builder()
                 .map(userEntityToMap(users))
@@ -27,6 +37,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository{
                 .build();
     }
 
+    @Override
     public ResultVO buildSuccessUser(UserEntity user){
         return ResultVO.builder()
                 .map(userEntityToMap(user))
@@ -34,6 +45,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository{
                 .build();
     }
 
+    @Override
     public HashMap<String, String> userEntityToMap(UserEntity user){
         HashMap<String, String> map = new HashMap<>();
         if(user==null) return map;
@@ -43,6 +55,7 @@ public class UserCustomRepositoryImpl implements UserCustomRepository{
         return map;
     }
 
+    @Override
     public HashMap<String, String> userEntityToMap(List<UserEntity> users){
         HashMap<String, String> map = new HashMap<>();
         for(UserEntity user: users){

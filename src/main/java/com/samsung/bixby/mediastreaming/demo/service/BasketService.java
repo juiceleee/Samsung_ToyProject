@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.swing.text.html.parser.Entity;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.samsung.bixby.mediastreaming.demo.service.helper.Helper.buildError;
@@ -36,7 +34,7 @@ public class BasketService {
     }
 
     public ResultVO getShoppingListById(String userName){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
 
         UserEntity user = userRepository.findByUsername(userName).get();
@@ -47,7 +45,7 @@ public class BasketService {
 
     @Transactional
     public ResultVO addShoppingListById(String userName, String itemName, Integer itemCnt){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
@@ -56,7 +54,7 @@ public class BasketService {
         ItemEntity item = itemRepository.findByItemname(itemName).get();
         BasketEntity basket;
 
-        List<BasketEntity> items = basketRepository.findByUserAndItemAAndIsbought(user, item, false);
+        List<BasketEntity> items = basketRepository.findByUserAndItemAndIsbought(user, item, false);
         if(items.isEmpty()) {
             basket = basketRepository.save(BasketEntity.builder()
                     .user(user)
@@ -80,7 +78,7 @@ public class BasketService {
 
     @Transactional
     public ResultVO confirmBuying(String userName, String itemName){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
@@ -89,7 +87,7 @@ public class BasketService {
         ItemEntity item = itemRepository.findByItemname(itemName).get();
         Integer stock = item.getStock();
 
-        List<BasketEntity> items = basketRepository.findByUserAndItemAAndIsbought(user, item, false);
+        List<BasketEntity> items = basketRepository.findByUserAndItemAndIsbought(user, item, false);
 
         if(items.isEmpty())
             return buildError(Constants.VO_ITEM_NOT_IN_BASKET);
@@ -111,7 +109,7 @@ public class BasketService {
 
     @Transactional
     public ResultVO updateItemFromShoppingList(String userName, String itemName, Integer itemCnt){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
@@ -119,7 +117,7 @@ public class BasketService {
         UserEntity user = userRepository.findByUsername(userName).get();
         ItemEntity item = itemRepository.findByItemname(itemName).get();
 
-        List<BasketEntity> items = basketRepository.findByUserAndItemAAndIsbought(user, item, false);
+        List<BasketEntity> items = basketRepository.findByUserAndItemAndIsbought(user, item, false);
         if(items.isEmpty())
             return buildError(Constants.VO_ITEM_NOT_EXIST);
 
@@ -145,7 +143,7 @@ public class BasketService {
 
     @Transactional
     public ResultVO deleteItemFromShoppingList(String userName, String itemName){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
@@ -153,13 +151,13 @@ public class BasketService {
         UserEntity user = userRepository.findByUsername(userName).get();
         ItemEntity item = itemRepository.findByItemname(itemName).get();
 
-        List<BasketEntity> baskets = basketRepository.findByUserAndItemAAndIsbought(user, item, false);
+        List<BasketEntity> baskets = basketRepository.findByUserAndItemAndIsbought(user, item, false);
         if(baskets.isEmpty())
             return buildError(Constants.VO_ITEM_NOT_EXIST);
         else {
             user.removeBasket(baskets.get(0));
             entityManager.flush();
-            basketRepository.deleteByUserAndItemAAndIsbought(user, item, false);
+            basketRepository.deleteByUserAndItemAndIsbought(user, item, false);
         }
 
         return basketRepository.buildSuccessBasket((BasketEntity) null);
@@ -167,7 +165,7 @@ public class BasketService {
 
     @Transactional
     public ResultVO deleteItemFromShoppingList(String userName){
-        if(userRepository.isUserNotExist(userName))
+        if(userRepository.UserNotExist(userName))
             return buildError(Constants.VO_USER_NOT_EXIST);
 
         UserEntity user = userRepository.findByUsername(userName).get();

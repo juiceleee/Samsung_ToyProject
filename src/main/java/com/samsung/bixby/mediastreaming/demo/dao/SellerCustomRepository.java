@@ -11,7 +11,7 @@ public interface SellerCustomRepository {
     HashMap<String, String> sellerEntityToMap(SellerEntity seller);
     ResultVO buildSuccessSeller(List<SellerEntity> sellers);
     ResultVO buildSuccessSeller(SellerEntity seller);
-    boolean isSellerExist(String sellerName);
-    boolean isSellerNotExist(String sellerName);
+    boolean SellerExist(String sellerName);
+    boolean SellerNotExist(String sellerName);
 
 }

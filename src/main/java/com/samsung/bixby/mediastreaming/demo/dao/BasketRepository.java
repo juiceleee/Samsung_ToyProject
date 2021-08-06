@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface BasketRepository extends JpaRepository<BasketEntity, Integer>, BasketCustomRepository {
     List<BasketEntity> findByUser(UserEntity user);
-    List<BasketEntity> findByUserAndItemAAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
+    List<BasketEntity> findByUserAndItemAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
 
     @Transactional
     void deleteByUser(UserEntity user);
@@ -22,7 +22,7 @@ public interface BasketRepository extends JpaRepository<BasketEntity, Integer>, 
     void deleteByItem(ItemEntity item);
 
     @Transactional
-    void deleteByUserAndItemAAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
+    void deleteByUserAndItemAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
 
     @Transactional
     @Modifying(clearAutomatically = true)

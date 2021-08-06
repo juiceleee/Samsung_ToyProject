@@ -4,15 +4,12 @@ package com.samsung.bixby.mediastreaming.demo.service;
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.dao.BasketRepository;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.BasketEntity;
-import com.samsung.bixby.mediastreaming.demo.dao.entitiy.ItemEntity;
-import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.UserEntity;
 import com.samsung.bixby.mediastreaming.demo.dao.UserRepository;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static com.samsung.bixby.mediastreaming.demo.service.helper.Helper.buildError;
@@ -34,7 +31,7 @@ public class UserService {
     }
 
     public ResultVO addUser(String userName){
-        if(userRepository.isUserExist(userName))
+        if(userRepository.UserExist(userName))
             return buildError(Constants.VO_USER_ALREADY_EXIST);
 
         UserEntity user = userRepository.save(UserEntity.builder()
@@ -59,9 +56,9 @@ public class UserService {
     }
 
     public ResultVO changeUser(String oldName, String newName){
-        if(userRepository.isUserNotExist(oldName))
+        if(userRepository.UserNotExist(oldName))
             return buildError(Constants.VO_USER_NOT_EXIST);
-        if(userRepository.isUserExist(newName))
+        if(userRepository.UserExist(newName))
             return buildError(Constants.VO_USER_ALREADY_EXIST);
 
         userRepository.updateUserName(oldName, newName);
