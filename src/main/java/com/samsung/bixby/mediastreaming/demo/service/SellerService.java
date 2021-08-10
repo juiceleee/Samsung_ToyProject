@@ -3,12 +3,15 @@ package com.samsung.bixby.mediastreaming.demo.service;
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.dao.BasketRepository;
 import com.samsung.bixby.mediastreaming.demo.dao.ItemRepository;
+import com.samsung.bixby.mediastreaming.demo.dao.entitiy.BasketEntity;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.ItemEntity;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
 import com.samsung.bixby.mediastreaming.demo.dao.SellerRepository;
+import com.samsung.bixby.mediastreaming.demo.dao.entitiy.UserEntity;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
@@ -53,25 +56,26 @@ public class SellerService {
         return sellerRepository.buildSuccessSeller(seller);
     }
 
+    @Transactional
     public ResultVO deleteSeller(String sellerName){
         if(sellerRepository.SellerNotExist(sellerName))
             return buildError(Constants.VO_SELLER_NOT_EXIST);
 
         SellerEntity seller = sellerRepository.findByName(sellerName).get();
-        List<ItemEntity> items = seller.getItems();
 
-
+        List<ItemEntity> items = itemRepository.findBySeller(seller);
         for(ItemEntity item : items){
-            seller.removeItem(item);
-        }
-
-        entityManager.flush();
-
-        for(ItemEntity item : items){
+            List<BasketEntity> baskets = basketRepository.findByItem(item);
+            for(BasketEntity basket : baskets){
+                UserEntity user = basket.getUser();
+                user.removeBasket(basket);
+                entityManager.flush();
+            }
             basketRepository.deleteByItem(item);
-            Integer id = item.getItemid();
-            itemRepository.deleteById(id);
         }
+
+        sellerRepository.nullItem(sellerName);
+        itemRepository.deleteBySeller(seller);
 
         sellerRepository.deleteById(seller.getId());
 

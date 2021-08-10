@@ -37,16 +37,18 @@ public class UserService {
         UserEntity user = userRepository.save(UserEntity.builder()
                 .username(userName)
                 .password(null)
-                .baskets(null)
-                .baskets(null).build());
+                .build());
         return userRepository.buildSuccessUser(user);
     }
 
     public ResultVO deleteUser(String userName){
+        if(userRepository.UserNotExist(userName))
+            return buildError(Constants.VO_USER_NOT_EXIST);
+
         UserEntity user = userRepository.findByUsername(userName).get();
         List<BasketEntity> baskets = user.getBaskets();
 
-        userRepository.setBasketsNull(user.getUserid());
+        userRepository.nullBasket(userName);
 
         basketRepository.deleteByUser(user);
 

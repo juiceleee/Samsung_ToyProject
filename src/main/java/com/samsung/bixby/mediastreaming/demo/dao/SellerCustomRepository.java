@@ -13,5 +13,6 @@ public interface SellerCustomRepository {
     ResultVO buildSuccessSeller(SellerEntity seller);
     boolean SellerExist(String sellerName);
     boolean SellerNotExist(String sellerName);
+    public void nullItem(String sellerName);
 
 }

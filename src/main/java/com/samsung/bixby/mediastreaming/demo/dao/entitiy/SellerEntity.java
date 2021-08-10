@@ -28,7 +28,7 @@ public class SellerEntity {
 
     @OneToMany
     @JoinColumn
-    private List<ItemEntity> items = new ArrayList<>();
+    @Builder.Default private List<ItemEntity> items = new ArrayList<>();
 
     public void addItem(ItemEntity item){
         this.items.add(item);
@@ -37,4 +37,6 @@ public class SellerEntity {
     public void removeItem(ItemEntity item){
         this.items.remove(item);
     }
+
+    public void nullItem(){this.items=new ArrayList<>();}
 }

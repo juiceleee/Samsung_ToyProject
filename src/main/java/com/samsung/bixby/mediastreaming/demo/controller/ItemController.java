@@ -70,8 +70,9 @@ public class ItemController {
     public ResponseEntity<HashMap<String, String>> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
 
         String itemName = itemRequestVO.getItemName();
+        String sellerName = itemRequestVO.getSellerName();
 
-        ResultVO resultVO = itemService.deleteItem(itemName);
+        ResultVO resultVO = itemService.deleteItem(itemName, sellerName);
 
 
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);

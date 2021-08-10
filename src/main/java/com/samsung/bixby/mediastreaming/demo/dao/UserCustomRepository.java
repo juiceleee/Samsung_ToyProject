@@ -14,4 +14,5 @@ public interface UserCustomRepository {
     public ResultVO buildSuccessUser(UserEntity user);
     public HashMap<String, String> userEntityToMap(UserEntity user);
     public HashMap<String, String> userEntityToMap(List<UserEntity> users);
+    public void nullBasket(String userName);
 }

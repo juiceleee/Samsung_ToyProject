@@ -8,6 +8,7 @@ import com.samsung.bixby.mediastreaming.demo.dao.SellerRepository;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
@@ -29,19 +30,6 @@ public class ItemService {
         this.entityManager = entityManager;
         this.basketRepository = basketRepository;
     }
-    
-
-    private Integer getItemIdByName(String itemName){
-        assert(itemRepository.findByItemname(itemName).isPresent());
-
-        return itemRepository.findByItemname(itemName).get().getItemid();
-    }
-
-    private Integer getItemCntByName(String itemName){
-        assert(itemRepository.findByItemname(itemName).isPresent());
-
-        return itemRepository.findByItemname(itemName).get().getStock();
-    }
 
     public ResultVO getItemList(){
         return itemRepository.buildSuccessItem(itemRepository.findAll());
@@ -59,6 +47,7 @@ public class ItemService {
         return itemRepository.buildSuccessItem(itemRepository.findByItemnameContaining(keyword));
     }
 
+    @Transactional
     public ResultVO addItemByName(String sellerName, String itemName, Integer itemCnt){
         if(itemRepository.isItemExist(itemName))
             return buildError(Constants.VO_ITEM_ALREADY_EXIST);
@@ -100,13 +89,15 @@ public class ItemService {
                 return itemRepository.buildSuccessItem((ItemEntity) null);
             }
             else if(curItemStock + itemStock == 0)
-                return deleteItem(itemName);
+                return deleteItem(itemName, sellerName);
             else
                 return buildError(Constants.VO_ITEM_CNT_TOO_MUCH);
         }
     }
 
-    public ResultVO deleteItem(String itemName){
+    public ResultVO deleteItem(String itemName, String sellerName){
+        if(sellerRepository.SellerNotExist(sellerName))
+            return buildError(Constants.VO_SELLER_NOT_EXIST);
         if(itemRepository.isItemNotExist(itemName))
             return buildError(Constants.VO_ITEM_NOT_EXIST);
 

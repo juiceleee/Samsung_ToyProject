@@ -29,7 +29,7 @@ public class UserEntity {
     private String password;
 
     @OneToMany
-    private List<BasketEntity> baskets = new ArrayList<>();
+    @Builder.Default private List<BasketEntity> baskets = new ArrayList<>();
 
     public void addBasket(BasketEntity basket){
         this.baskets.add(basket);
@@ -38,4 +38,6 @@ public class UserEntity {
     public void removeBasket(BasketEntity basket){
         this.baskets.remove(basket);
     }
+
+    public void nullBasket() {this.baskets = new ArrayList<>();}
 }

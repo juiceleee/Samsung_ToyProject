@@ -19,11 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer>, User
     @Modifying(clearAutomatically = true)
     @Query("update UserEntity u set u.username = :newName where u.username = :oldName")
     void updateUserName(@Param(value = "oldName") String oldName, @Param(value = "newName") String newName);
-
-    @Transactional
-    @Modifying(clearAutomatically = true)
-    @Query("update UserEntity i set i.baskets = :null where i.userid = :UserId")
-    void setBasketsNull(@Param(value = "UserId") Integer UserId);
 }
 
 

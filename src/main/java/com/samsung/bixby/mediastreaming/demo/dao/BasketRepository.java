@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface BasketRepository extends JpaRepository<BasketEntity, Integer>, BasketCustomRepository {
     List<BasketEntity> findByUser(UserEntity user);
+    List<BasketEntity> findByItem(ItemEntity item);
     List<BasketEntity> findByUserAndItemAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
 
     @Transactional

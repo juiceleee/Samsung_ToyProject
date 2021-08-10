@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +19,9 @@ public class SellerCustomRepositoryImpl implements SellerCustomRepository {
     @Autowired
     @Lazy
     SellerRepository sellerRepository;
+
+    @Autowired
+    EntityManager entityManager;
 
 
     @Override
@@ -46,10 +50,24 @@ public class SellerCustomRepositoryImpl implements SellerCustomRepository {
 
     @Override
     public ResultVO buildSuccessSeller(SellerEntity seller){
+
+        if(seller == null)
+            return ResultVO.builder()
+                    .map(null)
+                    .status(Constants.VO_SUCCESS)
+                    .build();
+
         return ResultVO.builder()
                 .map(sellerEntityToMap(seller))
                 .status(Constants.VO_SUCCESS)
                 .build();
+    }
+
+    @Override
+    public void nullItem(String sellerName){
+        SellerEntity seller = sellerRepository.findByName(sellerName).get();
+        seller.nullItem();
+        entityManager.flush();
     }
 
     @Override
