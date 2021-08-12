@@ -28,6 +28,10 @@ jobs:
           name: Login to DockerHub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
+      - run:
+          name: Run DB
+          command: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=$MYSQL_PASS --name $MYSQL_NAME mysql
+
       # Download and cache dependencies
       - restore_cache:
           keys:
