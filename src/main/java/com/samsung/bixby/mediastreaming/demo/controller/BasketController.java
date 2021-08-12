@@ -24,6 +24,7 @@ public class BasketController {
 
     private BasketService basketService;
 
+    @Autowired
     public BasketController(BasketService basketService){
         this.basketService = basketService;
     }

@@ -7,6 +7,7 @@ import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserRequestVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import static com.samsung.bixby.mediastreaming.demo.controller.helper.Helper.mak
 public class UserController {
     private UserService userService;
 
+    @Autowired
     public UserController(UserService userService){
         this.userService = userService;
     }

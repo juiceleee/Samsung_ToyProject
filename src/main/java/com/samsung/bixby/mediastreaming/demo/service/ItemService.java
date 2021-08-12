@@ -7,6 +7,7 @@ import com.samsung.bixby.mediastreaming.demo.dao.ItemRepository;
 import com.samsung.bixby.mediastreaming.demo.dao.SellerRepository;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class ItemService {
     private EntityManager entityManager;
     private BasketRepository basketRepository;
 
+    @Autowired
     public ItemService(ItemRepository itemRepository,
                        SellerRepository sellerRepository,
                        BasketRepository basketRepository,
