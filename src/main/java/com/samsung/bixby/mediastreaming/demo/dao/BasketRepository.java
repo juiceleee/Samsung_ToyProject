@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface BasketRepository extends JpaRepository<BasketEntity, Integer>, BasketCustomRepository {
-    List<BasketEntity> findByUser(UserEntity user);
+    List<BasketEntity> findByUserAndIsbought(UserEntity user, boolean isbought);
     List<BasketEntity> findByItem(ItemEntity item);
     List<BasketEntity> findByUserAndItemAndIsbought(UserEntity user, ItemEntity item, boolean isbought);
 

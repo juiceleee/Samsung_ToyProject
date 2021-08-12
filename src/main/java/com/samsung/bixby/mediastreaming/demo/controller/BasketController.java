@@ -87,4 +87,15 @@ public class BasketController {
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/status")
+    @ApiOperation(value="show bought items", response = ResponseEntity.class)
+    public ResponseEntity<HashMap<String, String>> getBoughtItem(@RequestBody BasketRequestVO basketRequestVO){
+        String userName = basketRequestVO.getUserName();
+        String itemName = basketRequestVO.getItemName();
+
+        ResultVO resultVO = basketService.getBoughtItem(userName);
+
+        return makeResponse(resultVO, HttpStatus.OK);
+    }
+
 }

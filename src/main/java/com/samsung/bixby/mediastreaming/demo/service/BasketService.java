@@ -38,7 +38,7 @@ public class BasketService {
             return buildError(Constants.VO_USER_NOT_EXIST);
 
         UserEntity user = userRepository.findByUsername(userName).get();
-        List<BasketEntity> basket = user.getBaskets();
+        List<BasketEntity> basket = basketRepository.findByUserAndIsbought(user, false);
 
         return basketRepository.buildSuccessBasket(basket);
     }
@@ -180,5 +180,16 @@ public class BasketService {
         basketRepository.deleteByUser(user);
 
         return basketRepository.buildSuccessBasket((BasketEntity) null);
+    }
+
+    public ResultVO getBoughtItem(String userName) {
+        if(userRepository.UserNotExist(userName))
+            return buildError(Constants.VO_USER_NOT_EXIST);
+
+        UserEntity user = userRepository.findByUsername(userName).get();
+        List<BasketEntity> baskets = basketRepository.findByUserAndIsbought(user, true);
+
+        return basketRepository.buildSuccessBasket(baskets);
+
     }
 }

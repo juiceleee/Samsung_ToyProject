@@ -308,8 +308,79 @@ class BasketServiceTest {
                 .andExpect(content().string("{}"));
     }
 
+    @Test
+    @DisplayName("delete basket")
+    @Transactional
+    public void deleteBasket() throws Exception{
+        addBasket("testuser", "testitem", 5);
 
 
+        BasketRequestVO basketRequestVO = BasketRequestVO.builder()
+                .userName("testuser")
+                .itemName("testitem")
+                .build();
+
+        ResultActions resultActions = this.mockMvc.perform(delete("/shopping/basket")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(basketRequestVO))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
+                .andExpect(status().isNoContent());
+    }
+
+
+    @Test
+    @DisplayName("Delete after confirm")
+    @Transactional
+    public void DeleteAfterConfirm() throws Exception{
+        addBasket("testuser", "testitem", 5);
+
+        BasketRequestVO requestVO = BasketRequestVO.builder()
+                .userName("testuser")
+                .itemName("testitem")
+                .itemCnt(5)
+                .build();
+
+        ResultActions resultActions = this.mockMvc.perform(post("/shopping/basket/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestVO))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
+                .andExpect(status().isNoContent());
+
+        resultActions = this.mockMvc.perform(get("/shopping/basket")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestVO))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string("{}"));
+    }
+
+    @Test
+    @DisplayName("Confirm buying and check")
+    @Transactional
+    public void ConfirmAndCheck() throws Exception{
+        confirmBuying();
+
+        BasketRequestVO requestVO = BasketRequestVO.builder()
+                .userName("testuser")
+                .build();
+
+        ResultActions resultActions = this.mockMvc.perform(get("/shopping/basket/status")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestVO))
+                .accept(MediaType.APPLICATION_JSON));
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("testitem").value("5"));
+    }
 
 
 }
