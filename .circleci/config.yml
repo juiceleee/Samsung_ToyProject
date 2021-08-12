@@ -8,7 +8,15 @@ jobs:
     docker:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
+        environment:
+          DB_ROOT_USER: juicelee
+          DB_URL: jdbc:mysql://localhost:3306/shopping
+          DB_DRIVER: com.mysql.cj.jdbc.Driver
+          DB_PASS: 1234
       - image: circleci/mysql:latest
+        environment:
+          MYSQL_ROOT_PASSWORD: 1234
+
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -31,7 +39,7 @@ jobs:
 
       - run:
           name: Run DB
-          command: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=$MYSQL_PASS --name $MYSQL_NAME mysql
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       # Download and cache dependencies
       - restore_cache:
