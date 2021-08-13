@@ -9,7 +9,7 @@ jobs:
       # specify the version you desire here
       - image: circleci/openjdk:8-jdk
         environment:
-          DB_ROOT_USER: juicelee
+          DB_ROOT_USER: root
           DB_URL: jdbc:mysql://localhost:3306/demo
           DB_DRIVER: com.mysql.cj.jdbc.Driver
           DB_PASS: 1234
@@ -40,6 +40,13 @@ jobs:
       - run:
           name: Run DB
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
+
+      - run:
+          name: install MYSQL CLI
+          command: |
+            sudo apt-get install default-mysql-client
+            mysql -h 127.0.0.1 -u root -e "create database demo"
+
 
       # Download and cache dependencies
       - restore_cache:
