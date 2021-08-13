@@ -12,11 +12,10 @@ jobs:
           DB_ROOT_USER: root
           DB_URL: jdbc:mysql://localhost:3306/demo
           DB_DRIVER: com.mysql.cj.jdbc.Driver
-          DB_PASS: ""
+          DB_PASS: 1234
       - image: circleci/mysql:latest
         environment:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ROOT_PASSWORD: 1234
 
 
       # Specify service dependencies here if necessary
