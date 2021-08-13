@@ -12,10 +12,11 @@ jobs:
           DB_ROOT_USER: root
           DB_URL: jdbc:mysql://localhost:3306/demo
           DB_DRIVER: com.mysql.cj.jdbc.Driver
-          DB_PASS: 1234
+          DB_PASS: ""
       - image: circleci/mysql:latest
         environment:
-          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_ROOT_PASSWORD: ''
 
 
       # Specify service dependencies here if necessary
@@ -48,7 +49,7 @@ jobs:
 
       - run:
           name: create Demo DB
-          command: mysql -h 127.0.0.1 -u root -e "create database demo"
+          command: mysql -h 127.0.0.1 -u root -p 1234 -e "create database demo"
 
       # Download and cache dependencies
       - restore_cache:
