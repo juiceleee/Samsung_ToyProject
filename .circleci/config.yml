@@ -48,7 +48,7 @@ jobs:
 
       - run:
           name: create Demo DB
-          command: mysql -h 127.0.0.1 -u root -e "create database demo"
+          command: mysql -h 127.0.0.1 -u root -p -e "create database demo"
 
       # Download and cache dependencies
       - restore_cache:
