@@ -45,11 +45,6 @@ jobs:
           name: install MYSQL CLI
           command: sudo apt-get install mysql-client
 
-      - run:
-          name: Create database
-          commmand: mysql -h 127.0.0.1 -u root -e "create database demo"
-
-
       # Download and cache dependencies
       - restore_cache:
           keys:
