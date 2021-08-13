@@ -46,6 +46,10 @@ jobs:
           command: sudo apt-get update
                   && sudo apt-get install default-mysql-client
 
+      - run:
+          name: create Demo DB
+          command: mysql -h 127.0.0.1 -u root -e "create database demo"
+
       # Download and cache dependencies
       - restore_cache:
           keys:
