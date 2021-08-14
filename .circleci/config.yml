@@ -69,8 +69,4 @@ jobs:
 
       - run:
           name: Build docker image
-          command: docker build -t juicelee/demo:1.0 .
-
-      - run:
-          name: Push docker image
-          command: docker push juicelee/demo:1.0
+          command: docker-compose up
