@@ -65,7 +65,7 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       # run tests!
-      - run: gradle test
+      - run: gradle bootJar
 
       - setup_remote_docker:
           version: 20.10.6
