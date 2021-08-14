@@ -10,7 +10,7 @@ services:
     ports:
       - 3306:3306
   service-a:
-    build: docker
+    build: ""
     restart: on-failure
     links:
       - db
