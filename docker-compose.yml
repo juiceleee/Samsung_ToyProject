@@ -9,6 +9,8 @@ services:
       MYSQL_DATABASE: demo
     ports:
       - 3306:3306
+    networks:
+      - backend_network
   shopping:
     image: juicelee/shopping:${TAG:-latest}
     environment:
@@ -18,8 +20,13 @@ services:
     ports:
       - 8080:8080
     build: .
-    restart: on-failure
+      dockerfile: Dockerfile
+    restart: always
     links:
       - db
     depends_on:
       - db
+    networks:
+      - backend_network
+networks:
+  backend_network:
