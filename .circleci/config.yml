@@ -69,8 +69,8 @@ jobs:
 
       - run: gradle bootJar
 
-      - setup_remote_docker:
-          version: 20.10.6
+#      - setup_remote_docker:
+#          version: 20.10.6
 
       - run:
           name: Build docker image
