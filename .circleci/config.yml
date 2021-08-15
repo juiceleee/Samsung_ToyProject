@@ -40,7 +40,7 @@ jobs:
 
       - run:
           name: Run DB
-          command: dockerize -wait tcp://docker-mysql:3306 -timeout 1m
+          command: dockerize -wait tcp://localhost:3306 -timeout 1m
 
       - run:
           name: install MYSQL CLI
