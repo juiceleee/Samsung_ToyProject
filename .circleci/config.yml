@@ -67,12 +67,16 @@ jobs:
       - run:
           command: |
             MYSQL_ADDR="localhost"
-            gradle test
+            echo $MYSQL_ADDR
+
+      - run: gradle test
 
       - run:
           command: |
             MYSQL_ADDR="docker-mysql"
-            gradle bootJar
+            echo $MYSQL_ADDR
+
+      -run: gradle bootJar
 
       - setup_remote_docker:
           version: 20.10.6
