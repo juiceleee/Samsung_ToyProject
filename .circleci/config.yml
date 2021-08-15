@@ -10,7 +10,7 @@ jobs:
       - image: circleci/openjdk:8-jdk
         environment:
           DB_ROOT_USER: root
-          DB_URL: jdbc:mysql://localhost:3306/demo
+          DB_URL: jdbc:mysql://docker-mysql:3306/demo
           DB_DRIVER: com.mysql.cj.jdbc.Driver
           DB_PASS: 1234
       - image: circleci/mysql:latest
@@ -40,7 +40,7 @@ jobs:
 
       - run:
           name: Run DB
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+          command: dockerize -wait tcp://docker-mysql:3306 -timeout 1m
 
       - run:
           name: install MYSQL CLI
