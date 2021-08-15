@@ -38,17 +38,17 @@ jobs:
           name: Login to DockerHub
           command: docker login -u $DOCKER_USER -p $DOCKER_PASS
 
-      - run:
-          name: Run DB
-          command: dockerize -wait tcp://localhost:3306 -timeout 1m
-
-      - run:
-          name: install MYSQL CLI
-          command: sudo apt-get update
-                  && sudo apt-get install default-mysql-client
-      - run:
-          name: create Demo DB
-          command: mysql -h 127.0.0.1 -u root < ~/Samsung_ToyProject/schema/add_database.sql
+#      - run:
+#          name: Run DB
+#          command: dockerize -wait tcp://localhost:3306 -timeout 1m
+#
+#      - run:
+#          name: install MYSQL CLI
+#          command: sudo apt-get update
+#                  && sudo apt-get install default-mysql-client
+#      - run:
+#          name: create Demo DB
+#          command: mysql -h 127.0.0.1 -u root < ~/Samsung_ToyProject/schema/add_database.sql
 
       # Download and cache dependencies
       - restore_cache:
@@ -64,17 +64,7 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-#      - run:
-#          command: |
-#            MYSQL_ADDR="localhost"
-#            echo $MYSQL_ADDR
-#
-#      - run: gradle test --stacktrace
-
-      - run:
-          command: |
-            MYSQL_ADDR="docker-mysql"
-            echo $MYSQL_ADDR
+      - run: gradle test --stacktrace
 
       - run: gradle bootJar
 
