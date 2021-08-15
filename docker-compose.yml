@@ -9,7 +9,8 @@ services:
       MYSQL_DATABASE: demo
     ports:
       - 3306:3306
-  service-a:
+  shopping:
+    image: juicelee/shopping:${TAG:-latest}
     build: ""
     restart: on-failure
     links:
