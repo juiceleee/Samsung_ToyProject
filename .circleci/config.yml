@@ -76,7 +76,7 @@ jobs:
             MYSQL_ADDR="docker-mysql"
             echo $MYSQL_ADDR
 
-      -run: gradle bootJar
+      - run: gradle bootJar
 
       - setup_remote_docker:
           version: 20.10.6
