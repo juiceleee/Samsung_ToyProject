@@ -64,10 +64,15 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests!
-      - run: gradle bootJar
+      - run:
+          command: |
+            MYSQL_ADDR="localhost"
+            gradle test
 
-      - run: gradle test
+      - run:
+          command: |
+            MYSQL_ADDR="docker-mysql"
+            gradle bootJar
 
       - setup_remote_docker:
           version: 20.10.6
