@@ -64,12 +64,12 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-#      - run:
-#          command: |
-#            MYSQL_ADDR="localhost"
-#            echo $MYSQL_ADDR
+      - run:
+          command: |
+            MYSQL_ADDR="localhost"
+            echo $MYSQL_ADDR
 
-      - run: gradle test
+      - run: gradle test --stacktrace
 
       - run:
           command: |
