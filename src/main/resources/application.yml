@@ -1,11 +1,8 @@
-server:
-  address: localhost
-  port: 8080
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: 1234
-    url: jdbc:mysql:/${MYSQL_ADDR}:3306/demo
+    url: jdbc:mysql:/docker-mysql:3306/demo
     username: root
   jpa:
     database: MYSQL
