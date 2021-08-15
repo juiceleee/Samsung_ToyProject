@@ -1,7 +1,12 @@
 spring:
   datasource:
-    url: jdbc:tc:mysql:5.7.22://localhost:3306/test
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: 1234
+    url: jdbc:mysql://localhost:3306/demo
+    username: root
   jpa:
+    database: MYSQL
     show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none

@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers
 class ItemServiceTest {
 
     private MockMvc mockMvc;
@@ -44,9 +43,6 @@ class ItemServiceTest {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
-
-    @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer();
 
     public void addSeller(String sellerName) throws Exception{
         SellerRequestVO requestVO = SellerRequestVO.builder()

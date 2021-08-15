@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers
 class UserServiceTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
@@ -38,9 +37,6 @@ class UserServiceTest {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
-
-    @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer();
 
     @BeforeEach
     public void initialize() throws Exception{

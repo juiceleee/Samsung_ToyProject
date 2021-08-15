@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-@Testcontainers
 class SellerServiceTest {
 
     private MockMvc mockMvc;
@@ -38,9 +37,6 @@ class SellerServiceTest {
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
-
-    @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer();
 
     @BeforeEach
     public void initialize() throws Exception{
