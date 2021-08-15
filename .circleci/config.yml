@@ -74,9 +74,9 @@ jobs:
 
       - run:
           name: Build docker image
-          command: docker-compose build -t juicelee/SamsungToyProject:$CIRCLE_BUILD_NUM
+          command: docker-compose build -t juicelee/samsungtoyproject:$CIRCLE_BUILD_NUM
 
       - run:
           name: Deploy docker image
-          command: docker push juicelee/SamsungToyProject:$CIRCLE_BUILD_NUM
+          command: docker push juicelee/samsungtoyproject:$CIRCLE_BUILD_NUM
 
