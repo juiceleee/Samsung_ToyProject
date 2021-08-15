@@ -67,9 +67,16 @@ jobs:
       # run tests!
       - run: gradle bootJar
 
+      - run: gradle test
+
       - setup_remote_docker:
           version: 20.10.6
 
       - run:
           name: Build docker image
-          command: docker-compose build
+          command: docker-compose build -t juicelee/SamsungToyProject:$CIRCLE_BUILD_NUM
+
+      - run:
+          name: Deploy docker image
+          command: docker push juicelee/SamsungToyProject:$CIRCLE_BUILD_NUM
+
