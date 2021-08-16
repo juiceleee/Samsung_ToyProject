@@ -1,6 +1,7 @@
 package com.samsung.bixby.mediastreaming.demo.controller.helper;
 
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
+import com.samsung.bixby.mediastreaming.demo.vo.ResponseVO;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,19 +10,19 @@ import java.util.HashMap;
 
 public class Helper {
 
-    public static HashMap<String, String> makeBadReqBody(String str) {
-        HashMap<String, String> result = new HashMap<>();
-        result.put("errorMessage", str);
-        return result;
+    public static ResponseVO makeBadReqBody(String str) {
+        ResponseVO responseVO = new ResponseVO(new HashMap<>());
+        responseVO.getResult().put("errorMessage", str);
+        return responseVO;
     }
 
-    public static ResponseEntity<HashMap<String, String>> makeResponse(ResultVO resultVO, HttpStatus ifSuccess){
+    public static ResponseEntity<ResponseVO> makeResponse(ResultVO resultVO, HttpStatus ifSuccess){
         switch(resultVO.getStatus()){
             case Constants.VO_SUCCESS:
                 if(ifSuccess.equals(HttpStatus.OK))
-                    return new ResponseEntity<>(resultVO.getMap(), HttpStatus.OK);
+                    return new ResponseEntity<>(new ResponseVO(resultVO.getMap()), HttpStatus.OK);
                 else if(ifSuccess.equals(HttpStatus.CREATED))
-                    return new ResponseEntity<>(resultVO.getMap(), HttpStatus.CREATED);
+                    return new ResponseEntity<>(new ResponseVO(resultVO.getMap()), HttpStatus.CREATED);
                 else if(ifSuccess.equals(HttpStatus.NO_CONTENT))
                     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
                 else

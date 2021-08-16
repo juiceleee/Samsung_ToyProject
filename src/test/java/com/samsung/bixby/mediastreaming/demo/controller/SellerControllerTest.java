@@ -1,4 +1,4 @@
-package com.samsung.bixby.mediastreaming.demo.service;
+package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samsung.bixby.mediastreaming.demo.vo.SellerRequestVO;
@@ -27,13 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-class SellerServiceTest {
+class SellerControllerTest {
 
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public SellerServiceTest(MockMvc mockMvc, ObjectMapper objectMapper){
+    public SellerControllerTest(MockMvc mockMvc, ObjectMapper objectMapper){
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
@@ -59,7 +59,7 @@ class SellerServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(sellerName).value(""));
+                .andExpect(jsonPath("$.result."+sellerName).value(""));
 
     }
 
@@ -180,7 +180,7 @@ class SellerServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testseller2").value(""));
+                .andExpect(jsonPath("$.result."+"testseller2").value(""));
 
         requestVO = SellerRequestVO.builder()
                 .oldSellerName("testseller2")

@@ -1,4 +1,4 @@
-package com.samsung.bixby.mediastreaming.demo.service;
+package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-class UserServiceTest {
+class UserControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public UserServiceTest(MockMvc mockMvc, ObjectMapper objectMapper){
+    public UserControllerTest(MockMvc mockMvc, ObjectMapper objectMapper){
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
@@ -59,7 +59,7 @@ class UserServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(userName).value(""));
+                .andExpect(jsonPath("$.result."+userName).value(""));
 
     }
 
@@ -182,7 +182,7 @@ class UserServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testuser2").value(""));
+                .andExpect(jsonPath("$.result."+"testuser2").value(""));
 
         requestVO = UserRequestVO.builder()
                 .oldUserName("testuser2")

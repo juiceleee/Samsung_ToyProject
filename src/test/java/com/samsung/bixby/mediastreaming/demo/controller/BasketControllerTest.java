@@ -1,4 +1,4 @@
-package com.samsung.bixby.mediastreaming.demo.service;
+package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.samsung.bixby.mediastreaming.demo.dao.entitiy.SellerEntity;
@@ -36,12 +36,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-class BasketServiceTest {
+class BasketControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public BasketServiceTest(MockMvc mockMvc, ObjectMapper objectMapper){
+    public BasketControllerTest(MockMvc mockMvc, ObjectMapper objectMapper){
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }
@@ -63,7 +63,7 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(userName).value(""));
+                .andExpect(jsonPath("$.result."+userName).value(""));
 
     }
 
@@ -80,7 +80,7 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(sellerName).value(""));
+                .andExpect(jsonPath("$.result."+sellerName).value(""));
 
     }
 
@@ -101,7 +101,7 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(itemName).value(stock.toString()));
+                .andExpect(jsonPath("$.result."+itemName).value(stock.toString()));
     }
 
     private static Stream<Arguments> basketSource(){
@@ -134,7 +134,7 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(itemName).value(itemCnt.toString()));
+                .andExpect(jsonPath("$.result."+itemName).value(itemCnt.toString()));
 
     }
 
@@ -206,20 +206,15 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        ItemRequestVO itemRequestVO = ItemRequestVO.builder()
-                .itemName("testitem")
-                .sellerName("testseller")
-                .build();
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(itemRequestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("0"));
+                .andExpect(jsonPath("$.result."+"testitem").value("0"));
     }
 
     @Test
@@ -300,19 +295,15 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        BasketRequestVO basketRequestVO = BasketRequestVO.builder()
-                .userName("testuser")
-                .build();
 
-        resultActions = this.mockMvc.perform(get("/shopping/basket")
+        resultActions = this.mockMvc.perform(get("/shopping/basket?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(basketRequestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
@@ -357,15 +348,14 @@ class BasketServiceTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        resultActions = this.mockMvc.perform(get("/shopping/basket")
+        resultActions = this.mockMvc.perform(get("/shopping/basket?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
@@ -374,19 +364,15 @@ class BasketServiceTest {
     public void ConfirmAndCheck() throws Exception{
         confirmBuying();
 
-        BasketRequestVO requestVO = BasketRequestVO.builder()
-                .userName("testuser")
-                .build();
 
-        ResultActions resultActions = this.mockMvc.perform(get("/shopping/basket/status")
+        ResultActions resultActions = this.mockMvc.perform(get("/shopping/basket/status?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("5"));
+                .andExpect(jsonPath("$.result."+"testitem").value("5"));
     }
 
 
