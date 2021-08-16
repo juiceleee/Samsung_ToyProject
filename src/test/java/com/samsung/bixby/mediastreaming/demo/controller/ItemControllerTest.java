@@ -245,7 +245,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("result").value("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
