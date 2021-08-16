@@ -18,13 +18,7 @@ jobs:
         environment:
           MYSQL_ROOT_PASSWORD: 1234
 
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: ~/demo
+    working_directory: ~/Samsung_ToyProject
 
     environment:
       # Customize the JVM maximum heap limit
@@ -48,7 +42,7 @@ jobs:
                   && sudo apt-get install default-mysql-client
       - run:
           name: create Demo DB
-          command: mysql -h 127.0.0.1 -u root -e "create database demo"
+          command: mysql -h 127.0.0.1 -u root < ~/Samsung_ToyProject/schema/add_database.sql
 
       # Download and cache dependencies
       - restore_cache:
@@ -64,5 +58,19 @@ jobs:
             - ~/.gradle
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests!
       - run: gradle test --stacktrace
+
+      - run: gradle bootJar
+
+      - setup_remote_docker:
+          version: 20.10.6
+
+      - run:
+          name: Build docker image
+          command: docker-compose build
+
+      - run:
+          name: Deploy docker image
+          command: docker push juicelee/shopping:latest
+
+

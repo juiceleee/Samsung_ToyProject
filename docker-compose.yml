@@ -1,0 +1,27 @@
+version: "3"
+services:
+  docker-mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_PASSWORD: 1234
+      MYSQL_DATABASE: demo
+    ports:
+      - 3306:3306
+    volumes:
+      - "./schema/add_database.sql:/docker-entrypoint-initdb.d/1.sql"
+  shopping:
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://docker-mysql:3306/demo
+      SRPING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+    ports:
+      - 8080:8080
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: juicelee/shopping:latest
+    restart: always
+    depends_on:
+      - docker-mysql
