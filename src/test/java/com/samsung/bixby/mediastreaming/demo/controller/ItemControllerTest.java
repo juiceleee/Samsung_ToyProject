@@ -177,7 +177,6 @@ class ItemControllerTest {
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
@@ -208,7 +207,6 @@ class ItemControllerTest {
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
@@ -239,7 +237,6 @@ class ItemControllerTest {
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
@@ -295,13 +292,12 @@ class ItemControllerTest {
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("result").value("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
@@ -329,13 +325,12 @@ class ItemControllerTest {
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("result").value("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test

@@ -206,14 +206,9 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        ItemRequestVO itemRequestVO = ItemRequestVO.builder()
-                .itemName("testitem")
-                .sellerName("testseller")
-                .build();
 
         resultActions = this.mockMvc.perform(get("/shopping/item")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(itemRequestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
@@ -300,19 +295,15 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        BasketRequestVO basketRequestVO = BasketRequestVO.builder()
-                .userName("testuser")
-                .build();
 
-        resultActions = this.mockMvc.perform(get("/shopping/basket")
+        resultActions = this.mockMvc.perform(get("/shopping/basket?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(basketRequestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("result").value("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
@@ -357,15 +348,14 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isNoContent());
 
-        resultActions = this.mockMvc.perform(get("/shopping/basket")
+        resultActions = this.mockMvc.perform(get("/shopping/basket?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("result").value("{}"));
+                .andExpect(jsonPath("$.result").value(""));
     }
 
     @Test
@@ -374,13 +364,9 @@ class BasketControllerTest {
     public void ConfirmAndCheck() throws Exception{
         confirmBuying();
 
-        BasketRequestVO requestVO = BasketRequestVO.builder()
-                .userName("testuser")
-                .build();
 
-        ResultActions resultActions = this.mockMvc.perform(get("/shopping/basket/status")
+        ResultActions resultActions = this.mockMvc.perform(get("/shopping/basket/status?userName=testuser")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(requestVO))
                 .accept(MediaType.APPLICATION_JSON));
 
         resultActions

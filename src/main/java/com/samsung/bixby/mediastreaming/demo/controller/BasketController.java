@@ -32,7 +32,7 @@ public class BasketController {
 
     @GetMapping
     @ApiOperation(value = "Browse shopping list by username", response = ResponseEntity.class)
-    public ResponseEntity<ResponseVO> getShoppingList(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> getShoppingList(@ModelAttribute BasketRequestVO basketRequestVO){
         ResultVO resultVO = basketService.getShoppingListById(basketRequestVO.getUserName());
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -91,9 +91,8 @@ public class BasketController {
 
     @GetMapping("/status")
     @ApiOperation(value="show bought items", response = ResponseEntity.class)
-    public ResponseEntity<ResponseVO> getBoughtItem(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> getBoughtItem(@ModelAttribute BasketRequestVO basketRequestVO){
         String userName = basketRequestVO.getUserName();
-        String itemName = basketRequestVO.getItemName();
 
         ResultVO resultVO = basketService.getBoughtItem(userName);
 

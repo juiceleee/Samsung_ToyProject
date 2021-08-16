@@ -40,7 +40,7 @@ public class ItemController {
 
     @GetMapping("/seller")
     @ApiOperation(value = "Get item list by seller", response = ResponseEntity.class)
-    public ResponseEntity<ResponseVO> getItem(@RequestBody ItemRequestVO itemRequestVO) {
+    public ResponseEntity<ResponseVO> getItem(@ModelAttribute ItemRequestVO itemRequestVO) {
         ResultVO resultVO = itemService.getItemListBySellerName(itemRequestVO.getSellerName());
 
         return makeResponse(resultVO, HttpStatus.OK);
