@@ -4,6 +4,7 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.service.BasketService;
 import com.samsung.bixby.mediastreaming.demo.vo.BasketRequestVO;
+import com.samsung.bixby.mediastreaming.demo.vo.ResponseVO;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +32,7 @@ public class BasketController {
 
     @GetMapping
     @ApiOperation(value = "Browse shopping list by username", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getShoppingList(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> getShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         ResultVO resultVO = basketService.getShoppingListById(basketRequestVO.getUserName());
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -39,7 +40,7 @@ public class BasketController {
 
     @PostMapping
     @ApiOperation(value = "Add new item to shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addShoppingList(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> addShoppingList(@RequestBody BasketRequestVO basketRequestVO){
         ResultVO resultVO = basketService.addShoppingListById(basketRequestVO.getUserName(),
                 basketRequestVO.getItemName(),
                 basketRequestVO.getItemCnt());
@@ -49,7 +50,7 @@ public class BasketController {
 
     @PutMapping
     @ApiOperation(value="Update item from shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> updateItemEntry(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> updateItemEntry(@RequestBody BasketRequestVO basketRequestVO){
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
         Integer itemCnt = basketRequestVO.getItemCnt();
@@ -61,7 +62,7 @@ public class BasketController {
 
     @DeleteMapping
     @ApiOperation(value="Delete item from shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItemEntry(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> deleteItemEntry(@RequestBody BasketRequestVO basketRequestVO){
 
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
@@ -79,7 +80,7 @@ public class BasketController {
 
     @PostMapping("/status")
     @ApiOperation(value="Buying item in shopping list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> buyItemEntry(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> buyItemEntry(@RequestBody BasketRequestVO basketRequestVO){
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
 
@@ -90,7 +91,7 @@ public class BasketController {
 
     @GetMapping("/status")
     @ApiOperation(value="show bought items", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getBoughtItem(@RequestBody BasketRequestVO basketRequestVO){
+    public ResponseEntity<ResponseVO> getBoughtItem(@RequestBody BasketRequestVO basketRequestVO){
         String userName = basketRequestVO.getUserName();
         String itemName = basketRequestVO.getItemName();
 

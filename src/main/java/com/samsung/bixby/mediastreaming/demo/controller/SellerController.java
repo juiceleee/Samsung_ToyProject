@@ -2,6 +2,7 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.service.SellerService;
+import com.samsung.bixby.mediastreaming.demo.vo.ResponseVO;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.SellerRequestVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserRequestVO;
@@ -30,7 +31,7 @@ public class SellerController {
 
     @GetMapping
     @ApiOperation(value = "Get seller user list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getSellerList(){
+    public ResponseEntity<ResponseVO> getSellerList(){
         ResultVO resultVO = sellerService.getSellerList();
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -39,7 +40,7 @@ public class SellerController {
 
     @PostMapping
     @ApiOperation(value = "Add new seller to DB", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addSeller(@RequestBody SellerRequestVO sellerRequestVO){
+    public ResponseEntity<ResponseVO> addSeller(@RequestBody SellerRequestVO sellerRequestVO){
         ResultVO resultVO = sellerService.addSeller(sellerRequestVO.getSellerName());
 
         return makeResponse(resultVO, HttpStatus.CREATED);
@@ -47,7 +48,7 @@ public class SellerController {
 
     @DeleteMapping
     @ApiOperation(value = "Delete user specified by username", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteSeller(@RequestBody SellerRequestVO sellerRequestVO){
+    public ResponseEntity<ResponseVO> deleteSeller(@RequestBody SellerRequestVO sellerRequestVO){
         ResultVO resultVO = sellerService.deleteSeller(sellerRequestVO.getSellerName());
 
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);
@@ -55,7 +56,7 @@ public class SellerController {
 
     @PutMapping
     @ApiOperation(value = "Change user name to new one", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> changeUser(@RequestBody SellerRequestVO sellerRequestVO){
+    public ResponseEntity<ResponseVO> changeUser(@RequestBody SellerRequestVO sellerRequestVO){
         ResultVO resultVO = sellerService.changeSeller(sellerRequestVO.getOldSellerName(),
                                                         sellerRequestVO.getNewSellerName());
 

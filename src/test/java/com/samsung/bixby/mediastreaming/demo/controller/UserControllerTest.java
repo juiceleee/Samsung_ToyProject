@@ -1,4 +1,4 @@
-package com.samsung.bixby.mediastreaming.demo.service;
+package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -28,12 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @SpringBootTest
-class UserServiceTest {
+class UserControllerTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public UserServiceTest(MockMvc mockMvc, ObjectMapper objectMapper){
+    public UserControllerTest(MockMvc mockMvc, ObjectMapper objectMapper){
         this.mockMvc = mockMvc;
         this.objectMapper = objectMapper;
     }

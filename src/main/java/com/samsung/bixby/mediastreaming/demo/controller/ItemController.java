@@ -3,6 +3,7 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.service.ItemService;
 import com.samsung.bixby.mediastreaming.demo.vo.ItemRequestVO;
+import com.samsung.bixby.mediastreaming.demo.vo.ResponseVO;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,7 +31,7 @@ public class ItemController {
 
     @GetMapping
     @ApiOperation(value = "Get all item list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getAllItem(){
+    public ResponseEntity<ResponseVO> getAllItem(){
         ResultVO resultVO = itemService.getItemList();
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -39,7 +40,7 @@ public class ItemController {
 
     @GetMapping("/seller")
     @ApiOperation(value = "Get item list by seller", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getItem(@RequestBody ItemRequestVO itemRequestVO) {
+    public ResponseEntity<ResponseVO> getItem(@RequestBody ItemRequestVO itemRequestVO) {
         ResultVO resultVO = itemService.getItemListBySellerName(itemRequestVO.getSellerName());
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -47,7 +48,7 @@ public class ItemController {
 
     @PostMapping
     @ApiOperation(value = "Add new item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addItem(@RequestBody ItemRequestVO itemRequestVO){
+    public ResponseEntity<ResponseVO> addItem(@RequestBody ItemRequestVO itemRequestVO){
         ResultVO resultVO = itemService.addItemByName(itemRequestVO.getSellerName(), itemRequestVO.getItemName(), itemRequestVO.getStock());
 
             return makeResponse(resultVO, HttpStatus.CREATED);
@@ -55,7 +56,7 @@ public class ItemController {
 
     @PutMapping
     @ApiOperation(value = "Change item number", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> updateItem(@RequestBody ItemRequestVO itemRequestVO){
+    public ResponseEntity<ResponseVO> updateItem(@RequestBody ItemRequestVO itemRequestVO){
         String userName = itemRequestVO.getSellerName();
         String itemName = itemRequestVO.getItemName();
         Integer itemStock = itemRequestVO.getStock();
@@ -67,7 +68,7 @@ public class ItemController {
 
     @DeleteMapping
     @ApiOperation(value = "Delete item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
+    public ResponseEntity<ResponseVO> deleteItem(@RequestBody ItemRequestVO itemRequestVO){
 
         String itemName = itemRequestVO.getItemName();
         String sellerName = itemRequestVO.getSellerName();
@@ -80,7 +81,7 @@ public class ItemController {
 
     @PutMapping("/name")
     @ApiOperation(value = "Change the name of item", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> changeItemName(@RequestBody ItemRequestVO itemRequestVO){
+    public ResponseEntity<ResponseVO> changeItemName(@RequestBody ItemRequestVO itemRequestVO){
         ResultVO resultVO = itemService.changeItemName(itemRequestVO.getOldName(), itemRequestVO.getNewName());
 
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);

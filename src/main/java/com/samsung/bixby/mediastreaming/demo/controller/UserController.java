@@ -3,6 +3,7 @@ package com.samsung.bixby.mediastreaming.demo.controller;
 
 import com.samsung.bixby.mediastreaming.demo.common.Constants;
 import com.samsung.bixby.mediastreaming.demo.service.UserService;
+import com.samsung.bixby.mediastreaming.demo.vo.ResponseVO;
 import com.samsung.bixby.mediastreaming.demo.vo.ResultVO;
 import com.samsung.bixby.mediastreaming.demo.vo.UserRequestVO;
 import io.swagger.annotations.Api;
@@ -31,7 +32,7 @@ public class UserController {
     /** /user methods **/
     @GetMapping
     @ApiOperation(value = "Get current user list", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> getUserList(){
+    public ResponseEntity<ResponseVO> getUserList(){
         ResultVO resultVO = userService.getUserList();
 
         return makeResponse(resultVO, HttpStatus.OK);
@@ -40,7 +41,7 @@ public class UserController {
 
     @PostMapping
     @ApiOperation(value = "Add new user to DB", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> addUser(@RequestBody UserRequestVO userRequestVO){
+    public ResponseEntity<ResponseVO> addUser(@RequestBody UserRequestVO userRequestVO){
         ResultVO resultVO = userService.addUser(userRequestVO.getUserName());
 
         return makeResponse(resultVO, HttpStatus.CREATED);
@@ -48,7 +49,7 @@ public class UserController {
 
     @DeleteMapping
     @ApiOperation(value = "Delete user specified by username", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> deleteUser(@RequestBody UserRequestVO userRequestVO){
+    public ResponseEntity<ResponseVO> deleteUser(@RequestBody UserRequestVO userRequestVO){
         ResultVO resultVO = userService.deleteUser(userRequestVO.getUserName());
 
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);
@@ -56,7 +57,7 @@ public class UserController {
 
     @PutMapping
     @ApiOperation(value = "Change user name to new one", response = ResponseEntity.class)
-    public ResponseEntity<HashMap<String, String>> changeUser(@RequestBody UserRequestVO userRequestVO){
+    public ResponseEntity<ResponseVO> changeUser(@RequestBody UserRequestVO userRequestVO){
         ResultVO resultVO = userService.changeUser(userRequestVO.getOldUserName(), userRequestVO.getNewUserName());
 
         return makeResponse(resultVO, HttpStatus.NO_CONTENT);
