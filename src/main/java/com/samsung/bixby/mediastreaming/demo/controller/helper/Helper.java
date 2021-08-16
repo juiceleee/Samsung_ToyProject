@@ -12,7 +12,7 @@ public class Helper {
 
     public static ResponseVO makeBadReqBody(String str) {
         ResponseVO responseVO = new ResponseVO(new HashMap<>());
-        responseVO.getMap().put("errorMessage", str);
+        responseVO.getResult().put("errorMessage", str);
         return responseVO;
     }
 

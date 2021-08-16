@@ -63,7 +63,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(userName).value(""));
+                .andExpect(jsonPath("$.result."+userName).value(""));
 
     }
 
@@ -80,7 +80,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(sellerName).value(""));
+                .andExpect(jsonPath("$.result."+sellerName).value(""));
 
     }
 
@@ -101,7 +101,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(itemName).value(stock.toString()));
+                .andExpect(jsonPath("$.result."+itemName).value(stock.toString()));
     }
 
     private static Stream<Arguments> basketSource(){
@@ -134,7 +134,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(itemName).value(itemCnt.toString()));
+                .andExpect(jsonPath("$.result."+itemName).value(itemCnt.toString()));
 
     }
 
@@ -219,7 +219,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("0"));
+                .andExpect(jsonPath("$.result."+"testitem").value("0"));
     }
 
     @Test
@@ -386,7 +386,7 @@ class BasketControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("5"));
+                .andExpect(jsonPath("$.result."+"testitem").value("5"));
     }
 
 

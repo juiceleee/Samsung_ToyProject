@@ -11,5 +11,5 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class ResponseVO {
-    Map<String, String> map;
+    Map<String, String> result;
 }
