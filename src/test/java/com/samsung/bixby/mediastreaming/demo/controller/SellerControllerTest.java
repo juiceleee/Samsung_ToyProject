@@ -59,7 +59,7 @@ class SellerControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(sellerName).value(""));
+                .andExpect(jsonPath("$.result."+sellerName).value(""));
 
     }
 
@@ -180,7 +180,7 @@ class SellerControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testseller2").value(""));
+                .andExpect(jsonPath("$.result."+"testseller2").value(""));
 
         requestVO = SellerRequestVO.builder()
                 .oldSellerName("testseller2")

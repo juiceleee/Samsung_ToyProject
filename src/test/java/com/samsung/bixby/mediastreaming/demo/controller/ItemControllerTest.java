@@ -57,7 +57,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(sellerName).value(""));
+                .andExpect(jsonPath("$.result."+sellerName).value(""));
 
     }
 
@@ -92,7 +92,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(itemName).value(stock.toString()));
+                .andExpect(jsonPath("$.result."+itemName).value(stock.toString()));
     }
 
     @Test
@@ -183,7 +183,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("11"));
+                .andExpect(jsonPath("$.result."+"testitem").value("11"));
     }
 
     @Test
@@ -214,7 +214,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem").value("2"));
+                .andExpect(jsonPath("$.result."+"testitem").value("2"));
     }
 
     @Test
@@ -398,7 +398,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testitem2").value("5"));
+                .andExpect(jsonPath("$.result."+"testitem2").value("5"));
 
         requestVO = ItemRequestVO.builder()
                 .oldName("testitem")

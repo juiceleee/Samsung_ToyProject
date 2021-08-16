@@ -59,7 +59,7 @@ class UserControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath(userName).value(""));
+                .andExpect(jsonPath("$.result."+userName).value(""));
 
     }
 
@@ -182,7 +182,7 @@ class UserControllerTest {
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("testuser2").value(""));
+                .andExpect(jsonPath("$.result."+"testuser2").value(""));
 
         requestVO = UserRequestVO.builder()
                 .oldUserName("testuser2")
