@@ -245,7 +245,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("{}"));
+                .andExpect(jsonPath("result").value("{}"));
     }
 
     @Test
@@ -301,7 +301,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("{}"));
+                .andExpect(jsonPath("result").value("{}"));
     }
 
     @Test
@@ -335,7 +335,7 @@ class ItemControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string("{}"));
+                .andExpect(jsonPath("result").value("{}"));
     }
 
     @Test
