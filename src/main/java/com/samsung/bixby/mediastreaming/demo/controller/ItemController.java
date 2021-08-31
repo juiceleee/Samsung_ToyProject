@@ -18,7 +18,7 @@ import static com.samsung.bixby.mediastreaming.demo.controller.helper.Helper.mak
 import static com.samsung.bixby.mediastreaming.demo.controller.helper.Helper.makeResponse;
 
 @RestController
-@Api(tags = "itemService")
+@Api(tags = "Item controller")
 @RequestMapping("shopping/item")
 public class ItemController {
 

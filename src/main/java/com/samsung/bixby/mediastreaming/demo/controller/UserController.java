@@ -19,7 +19,7 @@ import static com.samsung.bixby.mediastreaming.demo.controller.helper.Helper.mak
 import static com.samsung.bixby.mediastreaming.demo.controller.helper.Helper.makeResponse;
 
 @RestController
-@Api(tags = "userService")
+@Api(tags = "User controller")
 @RequestMapping("shopping/user")
 public class UserController {
     private UserService userService;

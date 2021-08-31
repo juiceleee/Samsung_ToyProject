@@ -12,16 +12,16 @@ services:
     volumes:
       - "./schema/add_database.sql:/docker-entrypoint-initdb.d/1.sql"
   shopping:
+    image: juicelee/shopping:latest
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://docker-mysql:3306/demo
       SRPING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
     ports:
       - 8080:8080
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: juicelee/shopping:latest
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
     restart: always
     depends_on:
       - docker-mysql
